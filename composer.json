@@ -1,0 +1,21 @@
+{
+  "name": "flexor/cmspagetie",
+  "description": "FLEXOR CMSPAGETIE",
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+    "OSL-3.0"
+  ],
+  "require": {
+    "php": "~7.1.3||~7.2.0",
+    "magento/framework": "102.0.*",
+    "magento/extension-b2b": "^1.1",
+    "magento/product-enterprise-edition": "2.3.1"
+  },
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": {
+      "Flexor\\Cmspagetie\\": ""
+    }
+  }
+}
