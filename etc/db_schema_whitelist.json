@@ -1,0 +1,18 @@
+{
+    "cms_page_tie": {
+        "column": {
+            "page_id": true,
+            "linked_page_id": true,
+            "store_id": true
+        },
+        "index": {
+            "CMS_PAGE_TIE_PAGE_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "CMS_PAGE_TIE_PAGE_ID_CMS_PAGE_PAGE_ID": true,
+            "CMS_PAGE_TIE_LINKED_PAGE_ID_CMS_PAGE_PAGE_ID": true,
+            "CMS_PAGE_TIE_STORE_ID_STORE_STORE_ID": true
+        }
+    }
+}
