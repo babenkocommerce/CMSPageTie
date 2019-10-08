@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="cms_page_tie" resource="default" engine="innodb" comment="CMS Pages Tie Table">
+        <column xsi:type="smallint"
+                name="page_id"
+                padding="6"
+                unsigned="false"
+                nullable="false"
+                identity="false"
+                comment="CMS Page ID"/>
+        <column xsi:type="smallint"
+                name="linked_page_id"
+                padding="6"
+                unsigned="false"
+                nullable="false"
+                identity="false"
+                comment="Linked CMS Page ID"/>
+        <column xsi:type="smallint"
+                name="store_id"
+                padding="5"
+                unsigned="true"
+                nullable="false"
+                identity="false"
+                comment="Linked CMS Page Store ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="page_id"/>
+            <column name="linked_page_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="CMS_PAGE_TIE_PAGE_ID_CMS_PAGE_PAGE_ID"
+                    table="cms_page_tie"
+                    column="page_id"
+                    referenceTable="cms_page"
+                    referenceColumn="page_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="CMS_PAGE_TIE_LINKED_PAGE_ID_CMS_PAGE_PAGE_ID"
+                    table="cms_page_tie"
+                    column="linked_page_id"
+                    referenceTable="cms_page"
+                    referenceColumn="page_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="CMS_PAGE_TIE_STORE_ID_CMS_PAGE_STORE_ID"
+                    table="cms_page_tie"
+                    column="store_id"
+                    referenceTable="store"
+                    referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="CMS_PAGE_TIE_PAGE_ID" indexType="btree">
+            <column name="page_id"/>
+        </index>
+    </table>
+</schema>
