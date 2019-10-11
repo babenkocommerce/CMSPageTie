@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/cmspagetie/add/:currentPageId/:linkedPageId/:storeId" method="POST">
+        <service class="Flexor\CMSPageTie\Api\Data\TieInterface"
+                 method="add"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/cmspagetie/update/:currentPageId/:linkedPageId/:storeId" method="POST">
+        <service class="Flexor\CMSPageTie\Api\Data\TieInterface"
+                 method="update"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/cmspagetie/remove/:currentPageId" method="DELETE">
+        <service class="Flexor\CMSPageTie\Api\Data\TieInterface"
+                 method="remove"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route url="/V1/cmspagetie/get/:currentPageId" method="GET">
+        <service class="Flexor\CMSPageTie\Api\Data\TieInterface"
+                 method="get"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+</routes>
