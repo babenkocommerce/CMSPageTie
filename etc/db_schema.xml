@@ -25,7 +25,6 @@
                 comment="Linked CMS Page Store ID"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="page_id"/>
-            <column name="linked_page_id"/>
             <column name="store_id"/>
         </constraint>
         <constraint xsi:type="foreign"
