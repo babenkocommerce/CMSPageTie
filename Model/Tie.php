@@ -72,6 +72,16 @@ class Tie extends \Magento\Framework\DataObject implements \Flexor\CMSPageTie\Ap
     }
 
     /**
+     * @param $pageId
+     * @param $targetStoreId
+     * @return string
+     */
+    public function getLinkedPageId($pageId, $targetStoreId)
+    {
+        return $this->getResource()->getLinkedPageId($pageId, $targetStoreId);
+    }
+
+    /**
      * @return \Flexor\CMSPageTie\Model\ResourceModel\Tie
      */
     protected function getResource()
