@@ -102,9 +102,10 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->where('page_id = :page_id')
             ->where('store_id = :store_id');
 
-        return $connection->fetchOne($select, [
-            'page_id' => (int)$pageId,
-            'store_id' => (int)$targetStoreId
+        return $connection->fetchOne(
+            $select, [
+            'page_id' => (int) $pageId,
+            'store_id' => (int) $targetStoreId
         ]);
     }
 

@@ -1,9 +1,11 @@
 <?php
-
-
 namespace Flexor\CMSPageTie\Api;
 
-
+/**
+ * Interface TieManagementInterface
+ * @package Flexor\CMSPageTie\Api
+ * @api
+ */
 interface TieManagementInterface
 {
     /**

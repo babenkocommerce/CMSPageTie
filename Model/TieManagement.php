@@ -1,26 +1,24 @@
 <?php
 
-
 namespace Flexor\CMSPageTie\Model;
-
 
 use Magento\Framework\Exception\NoSuchEntityException;
 
 class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
 {
-    protected $pageRepository;
+    private $pageRepository;
     /**
      * @var Tie
      */
-    protected $tie;
+    private $tieModelFactory;
 
 
     public function __construct(
         \Magento\Cms\Api\PageRepositoryInterface $pageRepository,
-        \Flexor\CMSPageTie\Model\Tie $tie
+        \Flexor\CMSPageTie\Model\TieFactory $tieModelFactory
     ) {
         $this->pageRepository = $pageRepository;
-        $this->tie = $tie;
+        $this->tieModelFactory = $tieModelFactory;
     }
 
     /**
@@ -28,16 +26,17 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      *
      * @param $currentPageId
      * @param $targetStoreId
-     * @return string|bool
+     * @return string
      */
     public function getLinkedCmsKey($currentPageId, $targetStoreId)
     {
+        $noResult = '';
         try {
             $linkedPageId = $this->getLinkedCmsIdByStoreId($currentPageId, $targetStoreId);
             $page = $this->pageRepository->getById($linkedPageId);
             return $page->getIdentifier();
         } catch (\Exception $e) {
-            return false;
+            return $noResult;
         }
     }
 
@@ -52,8 +51,9 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     public function getLinkedCmsArray($currentPageId)
     {
-        $linkedCms = $this->tie->get($currentPageId);
-        $resultArray = [$linkedCms[0]['store_id'] => $linkedCms[0]['linked_page_id']];
+        $linkedCmsFactory = $this->tieModelFactory->create();
+        $linkedCms = $linkedCmsFactory->get($currentPageId);
+        $resultArray = [$linkedCms[0]['store_id'] => (int) $linkedCms[0]['linked_page_id']];
         return $resultArray;
     }
 
@@ -66,7 +66,8 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     public function getLinkedCmsIdByStoreId($currentPageId, $storeId)
     {
-        $linkedPageId = $this->tie->getLinkedPageId($currentPageId, $storeId);
+        $linkedPageIdFactory = $this->tieModelFactory->create();
+        $linkedPageId = $linkedPageIdFactory->getLinkedPageId($currentPageId, $storeId);
         if (isset($linkedPageId)) {
             return $linkedPageId;
         }
@@ -80,6 +81,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     public function updateCmsLinks($linksArray)
     {
+        $UpdateCmsLinksModelFactory = $this->tieModelFactory->create();
         foreach ($linksArray as $key => $value) {
             $currentPageId = $key;
             foreach ($value as $keys => $values) {
@@ -87,6 +89,6 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 $storeId = (int) $values;
             }
         }
-        return $this->tie->update($currentPageId, $linkedPageId, $storeId);
+        return $UpdateCmsLinksModelFactory->update($currentPageId, $linkedPageId, $storeId);
     }
 }
