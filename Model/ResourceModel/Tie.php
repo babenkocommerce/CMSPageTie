@@ -11,7 +11,7 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * @var string
      */
-    protected $tieTable;
+    private $tieTable;
 
     /**
      * Constructor
@@ -27,54 +27,46 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @param int $currentPageId
      * @param int $linkedPageId
      * @param int $storeId
-     * @return $this
+     * @return int The number of affected rows.
      */
     public function add($currentPageId, $linkedPageId, $storeId)
     {
-        $this->getConnection()->insert(
+        return $this->getConnection()->insert(
             $this->getTieTable(),
             [
-                'page_id' => $currentPageId,
-                'linked_page_id' => $linkedPageId,
-                'store_id' => $storeId
+                'page_id' => (int) $currentPageId,
+                'linked_page_id' => (int) $linkedPageId,
+                'store_id' => (int) $storeId
             ]
         );
-
-        return $this;
     }
 
     /**
      * @param int $currentPageId
      * @param int $linkedPageId
      * @param int $storeId
-     * @return $this
+     * @return int The number of affected rows.
      */
     public function update($currentPageId, $linkedPageId, $storeId)
     {
-        $this->getConnection()->update(
+        return $this->getConnection()->insertOnDuplicate(
             $this->getTieTable(),
             [
-                'page_id' => $currentPageId,
-                'linked_page_id' => $linkedPageId,
-                'store_id' => $storeId
+                'page_id' => (int) $currentPageId,
+                'linked_page_id' => (int) $linkedPageId,
+                'store_id' => (int) $storeId
             ],
-            [
-                'page_id = ?' => (int)$currentPageId,
-                'store_id = ?' => (int)$storeId
-            ]);
-
-        return $this;
+            ['page_id', 'store_id']
+        );
     }
 
     /**
      * @param int $currentPageId
-     * @return $this
+     * @return int The number of affected rows.
      */
     public function remove($currentPageId)
     {
-        $this->getConnection()->delete($this->getTieTable(), ['page_id = ?' => (int)$currentPageId]);
-
-        return $this;
+        return $this->getConnection()->delete($this->getTieTable(), ['page_id = ?' => (int) $currentPageId]);
     }
 
     /**
@@ -86,7 +78,7 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $connection = $this->getConnection();
         $select = $connection->select()->from($this->getTieTable())->where('page_id = :page_id');
 
-        return $connection->fetchAll($select, ['page_id' => (int)$currentPageId]);
+        return $connection->fetchAll($select, ['page_id' => (int) $currentPageId]);
     }
 
 

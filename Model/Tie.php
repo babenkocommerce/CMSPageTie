@@ -6,26 +6,22 @@ namespace Flexor\CMSPageTie\Model;
  *
  * @package Flexor\CMSPageTie\Model
  */
-class Tie extends \Magento\Framework\DataObject implements \Flexor\CMSPageTie\Api\Data\TieInterface
+class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
 {
     /**
      * @var \Flexor\CMSPageTie\Model\ResourceModel\Tie
      */
-    protected $resourceTie;
+    private $resourceTie;
 
     /**
      * Constructor
      *
      * @param \Flexor\CMSPageTie\Model\ResourceModel\Tie $resourceTie,
-     * @param array $data
      * @return void
      */
-    public function __construct(
-        ResourceModel\Tie $resourceTie,
-        array $data = []
-    ) {
+    public function __construct(ResourceModel\Tie $resourceTie)
+    {
         $this->resourceTie = $resourceTie;
-        parent::__construct($data);
     }
 
     /**
