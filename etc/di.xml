@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Flexor\CMSPageTie\Api\Data\TieInterface" type="Flexor\CMSPageTie\Model\Tie"/>
+    <preference for="Flexor\CMSPageTie\Api\TieRepositoryInterface" type="Flexor\CMSPageTie\Model\TieRepository"/>
 </config>
