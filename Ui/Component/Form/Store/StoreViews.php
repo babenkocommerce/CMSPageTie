@@ -7,7 +7,6 @@ class StoreViews extends StoreOptions
 {
     /**
      * Return array of store view ids & labels for Dynamic Rows ui-component
-     *
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

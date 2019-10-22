@@ -5,6 +5,10 @@ namespace Flexor\CMSPageTie\Ui\Component\Form\Pages;
 use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as CmsPageCollectionFactory;
 use Magento\Framework\Data\OptionSourceInterface;
 
+/**
+ * Class Options
+ * @package Flexor\CMSPageTie\Ui\Component\Form\Pages
+ */
 class Options implements OptionSourceInterface
 {
     /**
@@ -17,14 +21,18 @@ class Options implements OptionSourceInterface
      */
     protected $cmsPageOptions;
 
+    /**
+     * Options constructor.
+     * @param CmsPageCollectionFactory $cmsPageCollectionFactory
+     */
     public function __construct(CmsPageCollectionFactory $cmsPageCollectionFactory)
     {
         $this->cmsPageCollectionFactory = $cmsPageCollectionFactory;
     }
 
     /**
-     * @return array Format: array(array('value' => '<value>', 'label' => '<label>'))
      * Cms Pages list as Options for Ui-Select component
+     * @return array Format: array(array('value' => '<value>', 'label' => '<label>'))
      */
     public function toOptionArray()
     {
