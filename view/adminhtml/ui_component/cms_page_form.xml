@@ -37,7 +37,7 @@
                     </item>
                 </argument>
             </field>
-            <field name="store_view" formElement="input">
+            <field name="store_view" formElement="hidden">
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
                         <item name="visible" xsi:type="boolean">false</item>
@@ -47,7 +47,7 @@
                     <dataType>text</dataType>
                 </settings>
             </field>
-            <field name="tied_cms_page" component="Magento_Ui/js/form/element/ui-select" formElement="select">
+            <field name="tied_cms_page" component="Flexor_CMSPageTie/js/form/element/ui-select-page" formElement="select">
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
                         <item name="filterOptions" xsi:type="boolean">true</item>
