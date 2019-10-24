@@ -8,20 +8,18 @@ namespace Flexor\CMSPageTie\Model;
  */
 class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
 {
-
     /**
-     * @var \Flexor\CMSPageTie\Model\Tie
+     * @var
      */
     private $tieModel;
 
     /**
      * TieRepository constructor.
-     *
-     * @param \Flexor\CMSPageTie\Model\Tie $tieModel
+     * @param \Flexor\CMSPageTie\Api\Data\TieInterfaceFactory $tieModelFactory
      */
-    public function __construct(\Flexor\CMSPageTie\Model\Tie $tieModel)
+    public function __construct(\Flexor\CMSPageTie\Api\Data\TieInterfaceFactory $tieModelFactory)
     {
-        $this->tieModel = $tieModel;
+        $this->tieModel = $tieModelFactory->create();
     }
 
     /**
