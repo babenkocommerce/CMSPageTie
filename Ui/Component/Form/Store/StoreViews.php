@@ -23,9 +23,9 @@ class StoreViews extends StoreOptions
             $storeId = $store->getId();
             $result[$i] = [
                 'record_id' => $i,
-                'store_view' => $storeId,
-                'store_view_label' => $storeLabel,
-                'tied_cms_page' => '0',
+                'store_id' => $storeId,
+                'store_label' => $storeLabel,
+                'linked_page_id' => '0',
                 /**
                  * TODO: Implement getting of tied cms page for specific store_view.
                  */

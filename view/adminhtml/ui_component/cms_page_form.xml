@@ -27,7 +27,7 @@
                     <item name="componentType" xsi:type="string">container</item>
                 </item>
             </argument>
-            <field name="store_view_label" formElement="text">
+            <field name="store_label" formElement="text">
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
                         <item name="visible" xsi:type="boolean">true</item>
@@ -37,7 +37,7 @@
                     </item>
                 </argument>
             </field>
-            <field name="store_view" formElement="hidden">
+            <field name="store_id" formElement="hidden">
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
                         <item name="visible" xsi:type="boolean">false</item>
@@ -47,7 +47,7 @@
                     <dataType>text</dataType>
                 </settings>
             </field>
-            <field name="tied_cms_page" component="Flexor_CMSPageTie/js/form/element/ui-select-page" formElement="select">
+            <field name="linked_page_id" component="Flexor_CMSPageTie/js/form/element/ui-select-page" formElement="select">
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
                         <item name="filterOptions" xsi:type="boolean">true</item>
