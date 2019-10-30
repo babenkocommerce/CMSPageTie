@@ -15,7 +15,7 @@ class Save
     private $messageManager;
 
     /**
-     * @var \Flexor\CMSPageTie\Api\TieManagementInterfaceFactory
+     * @var \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     private $tieManagement;
 
@@ -23,16 +23,16 @@ class Save
      * Save constructor.
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Message\ManagerInterface $messageManager
-     * @param \Flexor\CMSPageTie\Api\Data\TieManagementInterfaceFactory $tieManagementFactory
+     * @param \Flexor\CMSPageTie\Api\TieManagementInterface $tieManagement
      */
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Message\ManagerInterface $messageManager,
-        \Flexor\CMSPageTie\Api\TieManagementInterfaceFactory $tieManagementFactory
+        \Flexor\CMSPageTie\Api\TieManagementInterface $tieManagement
     ) {
         $this->logger = $logger;
         $this->messageManager = $messageManager;
-        $this->tieManagement = $tieManagementFactory->create();
+        $this->tieManagement = $tieManagement;
     }
 
     /**
