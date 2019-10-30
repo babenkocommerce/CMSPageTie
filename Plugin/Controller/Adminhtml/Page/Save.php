@@ -48,7 +48,7 @@ class Save
                 $ties = $subject->getRequest()->getParam('cms_page_tie_rows');
                 $linksArray = [];
                 foreach ($ties as $tie) {
-                    if ($tie['linked_page_id'] <> 0) {
+                    if ($tie['linked_page_id'] > 0) {
                         $linksArray[$tie['store_id']] = $tie['linked_page_id'];
                     }
                 }
