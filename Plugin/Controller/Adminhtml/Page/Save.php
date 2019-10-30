@@ -55,9 +55,9 @@ class Save
                 $this->tieManagement->updateCmsLinks($currentPageId, $linksArray);
             }
         } catch (\Exception $e) {
-            $exceptionMessage = __('Something went wrong while saving linked pages ties.') . ' ' . $e->getMessage();
+            $exceptionMessage = __('Something went wrong while saving linked pages ties.');
             $this->messageManager->addExceptionMessage($e, $exceptionMessage);
-            $this->logger->debug($exceptionMessage, ['exception' => $e]);
+            $this->logger->debug($exceptionMessage . ' ' . $e->getMessage(), ['exception' => $e]);
         }
 
         return $result;
