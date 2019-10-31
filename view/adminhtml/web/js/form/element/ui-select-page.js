@@ -31,7 +31,7 @@ define([
          * @param selectedStoreViews
          */
         setDisabled: function (selectedStoreViews) {
-            var elementStoreView = this.source.get(this.parentScope + '.store_view'),
+            var elementStoreView = this.source.get(this.parentScope + '.store_id'),
                 storeViews = selectedStoreViews ? selectedStoreViews : this.source.get('data.store_id');
 
             if (
