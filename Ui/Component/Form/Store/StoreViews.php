@@ -41,7 +41,7 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
             $storeId = $store->getId();
             $cmsPageOptions = [[
                 'label' => __('-- No Linked Page --'),
-                'value' => 0,
+                'value' => '0',
             ]];
             $cmsPageCollection = $this->cmsPageCollectionFactory->create();
             foreach ($cmsPageCollection as $cmsPage) {

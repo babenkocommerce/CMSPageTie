@@ -47,4 +47,14 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     {
         return [$this->localeResolver->getLocale() => $this->pageHelper->getPageUrl($currentPageId)];
     }
+
+    /**
+     * @param $currentPageId
+     * @param $linksArray
+     * @return mixed|void
+     */
+    public function updateCmsLinks($currentPageId, $linksArray)
+    {
+        // TODO: Implement updateCmsLinks() method.
+    }
 }
