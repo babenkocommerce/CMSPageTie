@@ -31,8 +31,14 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
     public function toOptionArray()
     {
         $result = [];
+        $stores = [];
         $i=0;
         $storeCollection = $this->systemStore->getStoreCollection();
+        foreach ($storeCollection as $store) {
+            $stores[] = $store->getId();
+        }
+        $cmsPageCollection = $this->cmsPageCollectionFactory->create()
+            ->addFilter('store', ['in' => $stores], 'public')->load();
         /** @var  \Magento\Store\Model\Store $store */
         foreach ($storeCollection as $store) {
             $storeLabel = $this->sanitizeName($store->getWebsite()->getName()). ' | ' .
@@ -43,7 +49,6 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
                 'label' => __('-- No Linked Page --'),
                 'value' => '0',
             ]];
-            $cmsPageCollection = $this->cmsPageCollectionFactory->create();
             foreach ($cmsPageCollection as $cmsPage) {
                 $storeIds = $cmsPage->getStoreId();
                 if ((count($storeIds) != count($storeCollection)) and (in_array($storeId, $storeIds))){
