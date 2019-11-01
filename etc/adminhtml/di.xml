@@ -2,7 +2,4 @@
     <type name="Magento\Cms\Controller\Adminhtml\Page\Save">
         <plugin name="link_manager" type="Flexor\CMSPageTie\Plugin\Controller\Adminhtml\Page\Save" sortOrder="1" />
     </type>
-   <type name="Magento\Cms\Model\Page\DataProvider">
-       <plugin name="flexor_page_tie_cms_page_data_provider" type="Flexor\CMSPageTie\Plugin\Model\Page\DataProvider"/>
-   </type>
 </config>

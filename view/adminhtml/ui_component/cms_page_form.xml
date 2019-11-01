@@ -1,76 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
-<fieldset name="cms_page_tie_form" class="Magento\Store\Ui\Component\Form\Fieldset\Websites">
-    <argument name="data" xsi:type="array">
-        <item name="config" xsi:type="array">
-            <item name="label" xsi:type="string" translate="true">Page StoreView Links</item>
-            <item name="collapsible" xsi:type="boolean">true</item>
-            <item name="opened" xsi:type="boolean">false</item>
-            <item name="sortOrder" xsi:type="number">35</item>
-        </item>
-    </argument>
-    <dynamicRows name="cms_page_tie_rows">
-        <settings>
-            <defaultRecord>true</defaultRecord>
-            <componentType>dynamicRows</componentType>
-            <addButton>false</addButton>
-            <dndConfig>
-                <param name="enabled" xsi:type="boolean">false</param>
-            </dndConfig>
-        </settings>
-        <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd" class="Flexor\CMSPageTie\Ui\Component\Form">
+    <fieldset name="cms_page_tie_form" class="Magento\Store\Ui\Component\Form\Fieldset\Websites">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Page StoreView Links</item>
+                <item name="collapsible" xsi:type="boolean">true</item>
+                <item name="opened" xsi:type="boolean">false</item>
+                <item name="sortOrder" xsi:type="number">35</item>
+            </item>
+        </argument>
+        <dynamicRows name="cms_page_tie_rows">
             <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="isTemplate" xsi:type="boolean">true</item>
-                    <item name="is_collection" xsi:type="boolean">true</item>
-                    <item name="componentType" xsi:type="string">container</item>
+                <item name="js_config" xsi:type="array">
+                    <item name="provider" xsi:type="string">cms_page_form.page_tie_data_source</item>
                 </item>
             </argument>
-            <field name="store_label" formElement="text">
+            <settings>
+                <defaultRecord>true</defaultRecord>
+                <componentType>dynamicRows</componentType>
+                <addButton>false</addButton>
+                <dndConfig>
+                    <param name="enabled" xsi:type="boolean">false</param>
+                </dndConfig>
+            </settings>
+            <container name="record" component="Magento_Ui/js/dynamic-rows/record">
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
-                        <item name="visible" xsi:type="boolean">true</item>
-                        <item name="label" xsi:type="string">Store View</item>
-                        <item name="template" xsi:type="string">ui/form/element/text</item>
-                        <item name="inputName" xsi:type="string">${ $.dataScope }.${ $.index }</item>
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="componentType" xsi:type="string">container</item>
                     </item>
                 </argument>
-            </field>
-            <field name="store_id" formElement="hidden">
-                <argument name="data" xsi:type="array">
-                    <item name="config" xsi:type="array">
-                        <item name="visible" xsi:type="boolean">false</item>
-                    </item>
-                </argument>
-                <settings>
-                    <dataType>text</dataType>
-                </settings>
-            </field>
-            <field name="linked_page_id" component="Flexor_CMSPageTie/js/form/element/ui-select-page" formElement="select">
-                <argument name="data" xsi:type="array">
-                    <item name="config" xsi:type="array">
-                        <item name="filterOptions" xsi:type="boolean">true</item>
-                        <item name="multiple" xsi:type="boolean">false</item>
-                        <item name="showCheckbox" xsi:type="boolean">false</item>
-                        <item name="disableLabel" xsi:type="boolean">true</item>
-                        <item name="isRemoveSelectedIcon" xsi:type="boolean">false</item>
-                        <item name="levelsVisibility" xsi:type="number">1</item>
-                        <item name="chipsEnabled" xsi:type="boolean">false</item>
-                        <item name="imports" xsi:type="array">
-                            <item name="options" xsi:type="string">${ $.provider }:${ $.parentScope }.cms_page_options</item>
+                <field name="store_label" formElement="text">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="visible" xsi:type="boolean">true</item>
+                            <item name="label" xsi:type="string">Store View</item>
+                            <item name="template" xsi:type="string">ui/form/element/text</item>
+                            <item name="inputName" xsi:type="string">${ $.dataScope }.${ $.index }</item>
                         </item>
-                    </item>
-                </argument>
-                <settings>
-                    <elementTmpl>ui/grid/filters/elements/ui-select</elementTmpl>
-                    <validation>
-                    </validation>
-                    <dataType>text</dataType>
-                    <label translate="true">Linked CMS Page</label>
-                </settings>
-            </field>
-        </container>
-    </dynamicRows>
-</fieldset>
+                    </argument>
+                </field>
+                <field name="store_id" formElement="hidden">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="visible" xsi:type="boolean">false</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <dataType>text</dataType>
+                    </settings>
+                </field>
+                <field name="linked_page_id" component="Flexor_CMSPageTie/js/form/element/ui-select-page" formElement="select">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="filterOptions" xsi:type="boolean">true</item>
+                            <item name="multiple" xsi:type="boolean">false</item>
+                            <item name="showCheckbox" xsi:type="boolean">false</item>
+                            <item name="disableLabel" xsi:type="boolean">true</item>
+                            <item name="isRemoveSelectedIcon" xsi:type="boolean">false</item>
+                            <item name="levelsVisibility" xsi:type="number">1</item>
+                            <item name="chipsEnabled" xsi:type="boolean">false</item>
+                            <item name="imports" xsi:type="array">
+                                <item name="options" xsi:type="string">${ $.provider }:${ $.parentScope }.cms_page_options</item>
+                            </item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <elementTmpl>ui/grid/filters/elements/ui-select</elementTmpl>
+                        <validation>
+                        </validation>
+                        <dataType>text</dataType>
+                        <label translate="true">Linked CMS Page</label>
+                    </settings>
+                </field>
+            </container>
+        </dynamicRows>
+    </fieldset>
 </form>
