@@ -55,6 +55,7 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
                     $cmsPageOptions[] = [
                         'label' => $cmsPage->getTitle(),
                         'value' => $cmsPage->getId(),
+                        'available_in' => $storeIds,
                     ];
                 }
             }
