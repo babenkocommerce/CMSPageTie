@@ -2,10 +2,6 @@
 
 namespace Flexor\CMSPageTie\Ui\Component;
 
-use Flexor\CMSPageTie\Ui\Component\Form\Store\StoreViews;
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
-
 /**
  * Custom Form Ui component for CMS Page
  * @package Flexor\CMSPageTie\Ui\Component
@@ -13,26 +9,34 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 class Form extends \Magento\Ui\Component\Form
 {
     /**
-     * @var StoreViews
+     * @var \Flexor\CMSPageTie\Ui\Component\Form\Store\StoreViews
      */
     protected $storeViews;
 
     /**
+     * @var \Flexor\CMSPageTie\Api\TieRepositoryInterface
+     */
+    private $tieRepository;
+
+    /**
      * Form constructor.
-     * @param ContextInterface $context
-     * @param FilterBuilder $filterBuilder
-     * @param StoreViews $storeViews
+     * @param \Magento\Framework\View\Element\UiComponent\ContextInterface $context
+     * @param \Magento\Framework\Api\FilterBuilder $filterBuilder
+     * @param \Flexor\CMSPageTie\Ui\Component\Form\Store\StoreViews $storeViews
+     * @param \Flexor\CMSPageTie\Api\TieRepositoryInterface $tieRepositoryFactory
      * @param array $components
      * @param array $data
      */
     public function __construct(
-        ContextInterface $context,
-        FilterBuilder $filterBuilder,
-        StoreViews $storeViews,
+        \Magento\Framework\View\Element\UiComponent\ContextInterface $context,
+        \Magento\Framework\Api\FilterBuilder $filterBuilder,
+        \Flexor\CMSPageTie\Ui\Component\Form\Store\StoreViews $storeViews,
+        \Flexor\CMSPageTie\Api\TieRepositoryInterface $tieRepository,
         array $components = [],
         array $data = []
     ) {
         $this->storeViews = $storeViews;
+        $this->tieRepository = $tieRepository;
         parent::__construct($context, $filterBuilder, $components, $data);
     }
 
@@ -44,7 +48,11 @@ class Form extends \Magento\Ui\Component\Form
     public function getDataSourceData()
     {
         $dataSource = parent::getDataSourceData();
+        $ties = $this->tieRepository->get($dataSource['data']['page_id']);
         $dataSource['data']['cms_page_tie_rows'] = $this->storeViews->toOptionArray();
+        foreach ($ties as $tie) {
+            $dataSource['data']['cms_page_tie_rows'][$tie['store_id']]['linked_page_id'] = $tie['linked_page_id'];
+        }
         return $dataSource;
     }
 }
