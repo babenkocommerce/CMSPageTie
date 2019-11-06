@@ -51,7 +51,14 @@ class Form extends \Magento\Ui\Component\Form
         $ties = $this->tieRepository->get($dataSource['data']['page_id']);
         $dataSource['data']['cms_page_tie_rows'] = $this->storeViews->toOptionArray();
         foreach ($ties as $tie) {
-            $dataSource['data']['cms_page_tie_rows'][$tie['store_id']]['linked_page_id'] = $tie['linked_page_id'];
+            $cmsPageOptions = $dataSource['data']['cms_page_tie_rows'][$tie['store_id']]['cms_page_options'];
+            foreach ($cmsPageOptions as $cmsPageOption) {
+                if ($cmsPageOption['value'] === $tie['linked_page_id']) {
+                    $dataSource['data']['cms_page_tie_rows'][$tie['store_id']]['linked_page_id']
+                        = $tie['linked_page_id'];
+                    break;
+                }
+            }
         }
         return $dataSource;
     }
