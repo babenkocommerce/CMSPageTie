@@ -1,12 +1,16 @@
 <?php
 namespace Flexor\CMSPageTie\Ui\Component\Form\Store;
 
+/**
+ * Class StoreViews
+ * @package Flexor\CMSPageTie\Ui\Component\Form\Store
+ */
 class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Options
 {
     /**
      * @var \Magento\Cms\Model\ResourceModel\Page\CollectionFactory
      */
-    protected $cmsPageCollectionFactory;
+    private $cmsPageCollectionFactory;
 
     /**
      * StoreViews constructor.
@@ -31,18 +35,17 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
     public function toOptionArray()
     {
         $result = [];
-        $stores = [];
-        $i=0;
+        $i = 0;
         $storeCollection = $this->systemStore->getStoreCollection();
-        foreach ($storeCollection as $store) {
-            $stores[] = $store->getId();
-        }
         $cmsPageCollection = $this->cmsPageCollectionFactory->create()
-            ->addFilter('store', ['in' => $stores], 'public')->load();
+            ->addFilter('store', ['in' => array_keys($storeCollection)], 'public')->load();
+
         /** @var  \Magento\Store\Model\Store $store */
         foreach ($storeCollection as $store) {
-            $storeLabel = $this->sanitizeName($store->getWebsite()->getName()). ' | ' .
-                $this->sanitizeName($store->getGroup()->getName()). ' | ' .
+            $storeLabel = $this->sanitizeName($store->getWebsite()->getName())
+                . ' | ' .
+                $this->sanitizeName($store->getGroup()->getName())
+                . ' | ' .
                 $this->sanitizeName($store->getName());
             $storeId = $store->getId();
             $cmsPageOptions = [[
@@ -51,7 +54,7 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
             ]];
             foreach ($cmsPageCollection as $cmsPage) {
                 $storeIds = $cmsPage->getStoreId();
-                if ((count($storeIds) != count($storeCollection)) and (in_array($storeId, $storeIds))){
+                if ((count($storeIds) != count($storeCollection)) and (in_array($storeId, $storeIds))) {
                     $cmsPageOptions[] = [
                         'label' => $cmsPage->getTitle(),
                         'value' => $cmsPage->getId(),
