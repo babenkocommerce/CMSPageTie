@@ -11,7 +11,7 @@ class Form extends \Magento\Ui\Component\Form
     /**
      * @var \Flexor\CMSPageTie\Ui\Component\Form\Store\StoreViews
      */
-    protected $storeViews;
+    private $storeViews;
 
     /**
      * @var \Flexor\CMSPageTie\Api\TieRepositoryInterface
@@ -51,11 +51,20 @@ class Form extends \Magento\Ui\Component\Form
         $ties = $this->tieRepository->get($dataSource['data']['page_id']);
         $dataSource['data']['cms_page_tie_rows'] = $this->storeViews->toOptionArray();
         foreach ($ties as $tie) {
-            $cmsPageOptions = $dataSource['data']['cms_page_tie_rows'][$tie['store_id']]['cms_page_options'];
-            foreach ($cmsPageOptions as $cmsPageOption) {
+            $cmsPageOptions = ['pageOptions' => [], 'row' => ''];
+            foreach ($dataSource['data']['cms_page_tie_rows'] as $rowKey => $rowData) {
+                if ($rowData['store_id'] == $tie['store_id']) {
+                    $cmsPageOptions = [
+                        'pageOptions' => $rowData['cms_page_options'],
+                        'row' => $rowKey,
+                    ];
+                    break;
+                }
+            }
+            foreach ($cmsPageOptions['pageOptions'] as $cmsPageOption) {
                 if ($cmsPageOption['value'] === $tie['linked_page_id']) {
-                    $dataSource['data']['cms_page_tie_rows'][$tie['store_id']]['linked_page_id']
-                        = $tie['linked_page_id'];
+                    $dataSource['data']['cms_page_tie_rows'][$cmsPageOptions['row']]['linked_page_id'] =
+                        $tie['linked_page_id'];
                     break;
                 }
             }
