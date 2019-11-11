@@ -1,6 +1,8 @@
 <?php
 namespace Flexor\CMSPageTie\Api\Data;
 
+use http\Exception;
+
 /**
  * Interface TieInterface
  * @package Flexor\CMSPageTie\Api\Data
@@ -9,30 +11,21 @@ namespace Flexor\CMSPageTie\Api\Data;
 interface TieInterface
 {
     /**
-     * @param int $currentPageId
-     * @param int $linkedPageId
-     * @param int $storeId
+     * @param $relations
      * @return $this
      */
-    public function add($currentPageId, $linkedPageId, $storeId);
+    public function add($relations);
 
     /**
-     * @param int $currentPageId
-     * @param int $linkedPageId
-     * @param int $storeId
+     * @param $relations
      * @return $this
      */
-    public function update($currentPageId, $linkedPageId, $storeId);
-
-    /**
-     * @param int $currentPageId
-     * @return $this
-     */
-    public function remove($currentPageId);
+    public function remove($relations);
 
     /**
      * @param int $currentPageId
      * @return mixed
      */
     public function get($currentPageId);
+
 }
