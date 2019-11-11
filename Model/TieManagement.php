@@ -90,7 +90,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     {
         $attachedStores = $this->cmsPageModel->lookupStoreIds($currentPageId);
         $locale = [];
-        foreach($attachedStores as $attachedStore) {
+        foreach ($attachedStores as $attachedStore) {
             $addLocaleUrl = true;
             foreach ($locale as $existing) {
                 if ($this->pageHelper->getPageUrl($currentPageId) == $existing) {
@@ -125,25 +125,25 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     public function updateCmsLinks($currentPageId, $linksArray)
     {
-        $existingLinks = $this->tieRepository->get($currentPageId);
-        $attachedStores = $this->cmsPageModel->lookupStoreIds($currentPageId);
+        $currentPageInfo = [
+            'stores' => $this->cmsPageModel->lookupStoreIds($currentPageId),
+            'page_id' => (int) $currentPageId
+        ];
 
-        $currentPageArray = [];
-        foreach ($attachedStores as $attachedStore) {
-            $currentPageArray[] = ['store_id' => (int) $attachedStore, 'page_id' => $currentPageId];
-        }
+        $linksToDelete = array_values($linksArray);
+        $linksToDelete[] = $currentPageId;
+        $this->tieRepository->remove($linksToDelete);
 
-        $compareLinks = $this->compareLinks($linksArray, $existingLinks);
-        list($linksToInsert, $linksToDelete) = $compareLinks;
-
-        if ($linksToDelete) {
-            $this->tieRepository->remove($linksToDelete);
-        }
-
-        if ($linksToInsert) {
+        if (count($linksArray)) {
             $createdRelations = [];
-            foreach ($linksToInsert as $storeId => $linkedCmsPageId) {
-                $createdRelations = $this->addTieRelations($currentPageArray, $storeId, $linkedCmsPageId, $linksArray, $createdRelations);
+            foreach ($linksArray as $storeId => $linkedCmsPageId) {
+                $createdRelations = $this->addTieRelations(
+                    $currentPageInfo,
+                    $storeId,
+                    $linkedCmsPageId,
+                    $linksArray,
+                    $createdRelations
+                );
             }
             $links = $this->tieRepository->add($createdRelations);
             return $links;
@@ -218,33 +218,15 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     private function addTieRelations($currentPageArray, $storeId, $pageId, $linksArray, $result = [])
     {
-        foreach ($currentPageArray as $currentPageArrays) {
-            $valuesToAdd = [
-                [
-                    'page_id' => $currentPageArrays['page_id'],
-                    'linked_page_id' => $pageId,
-                    'store_id' => $storeId
-                ]
-            ];
-            $valuesToAdd[] = [
-                'page_id' => $pageId,
-                'linked_page_id' => $currentPageArrays['page_id'],
-                'store_id' => $currentPageArrays['store_id']
-            ];
+        if ($pageId) {
+            $valuesToAdd = [$this->populateTieArray($currentPageArray['page_id'], $pageId, $storeId)];
+            foreach ($currentPageArray['stores'] as $currentPageStoreId) {
+                $valuesToAdd[] = $this->populateTieArray($pageId, $currentPageArray['page_id'], $currentPageStoreId);
+            }
             foreach ($linksArray as $cmsStoreId => $linkedCmsPageId) {
-                if ($pageId != $linkedCmsPageId) {
-                    $valuesToAdd = [
-                        [
-                            'page_id' => (int) $pageId,
-                            'linked_page_id' => (int) $linkedCmsPageId,
-                            'store_id' => (int) $cmsStoreId
-                        ],
-                        [
-                            'page_id' => (int) $linkedCmsPageId,
-                            'linked_page_id' => (int) $pageId,
-                            'store_id' => (int) $storeId
-                        ]
-                    ];
+                if ($cmsStoreId != $storeId) {
+                    $valuesToAdd[] = $this->populateTieArray($pageId, $linkedCmsPageId, $cmsStoreId);
+                    $valuesToAdd[] = $this->populateTieArray($linkedCmsPageId, $pageId, $storeId);
                 }
             }
             foreach ($valuesToAdd as $newTie) {
@@ -257,54 +239,37 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     }
 
     /**
+     * Populate formatted Tie array from data
+     *
+     * @param $pageId
+     * @param $linkedPageId
+     * @param $storeId
+     * @return array
+     */
+    private function populateTieArray($pageId, $linkedPageId, $storeId)
+    {
+        return [
+            'page_id' => (int) $pageId,
+            'linked_page_id' => (int) $linkedPageId,
+            'store_id' => (int) $storeId,
+        ];
+    }
+
+    /**
      * Compare values to avoid duplication
      *
      * @param $valueToAdd
-     * @param $results
+     * @param $rows
      * @return bool
      */
-    private function compareResult($valueToAdd, $results)
+    private function compareResult($valueToAdd, $rows)
     {
         $result = true;
-        foreach ($results as $row)
-        {
+        foreach ($rows as $row) {
             if ($row == $valueToAdd) {
                 $result = false;
             }
         }
         return $result;
-    }
-
-    /**
-     * Compare links, which data to delete, which to insert
-     *
-     * @param $frontData
-     * @param $dbArray
-     * @return array
-     */
-    private function compareLinks($frontData, $dbArray)
-    {
-        $linksToInsert = $frontData;
-        $linksToDelete = $frontData;
-
-        foreach($dbArray as $oldLink) {
-            if (isset($frontData[$oldLink['store_id']]) && $oldLink['store_id']) {
-                unset($linksToInsert[$oldLink['store_id']]);
-                unset($linksToDelete[$oldLink['store_id']]);
-            } else {
-                $linksToDelete[] = [$oldLink['linked_page_id']];
-            }
-        }
-        return [$linksToInsert, array_values($linksToDelete)];
-    }
-
-    /**
-     * @param $currentPageId
-     * @param $linksArray
-     * @return mixed|void
-     */
-    public function updateCmsLinks($currentPageId, $linksArray)
-    {
-        // TODO: Implement updateCmsLinks() method.
     }
 }
