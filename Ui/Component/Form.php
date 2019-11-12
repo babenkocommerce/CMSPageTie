@@ -48,24 +48,26 @@ class Form extends \Magento\Ui\Component\Form
     public function getDataSourceData()
     {
         $dataSource = parent::getDataSourceData();
-        $ties = $this->tieRepository->get($dataSource['data']['page_id']);
         $dataSource['data']['cms_page_tie_rows'] = $this->storeViews->toOptionArray();
-        foreach ($ties as $tie) {
-            $cmsPageOptions = ['pageOptions' => [], 'row' => ''];
-            foreach ($dataSource['data']['cms_page_tie_rows'] as $rowKey => $rowData) {
-                if ($rowData['store_id'] == $tie['store_id']) {
-                    $cmsPageOptions = [
-                        'pageOptions' => $rowData['cms_page_options'],
-                        'row' => $rowKey,
-                    ];
-                    break;
+        if (isset($dataSource['data']['page_id'])) {
+            $ties = $this->tieRepository->get($dataSource['data']['page_id']);
+            foreach ($ties as $tie) {
+                $cmsPageOptions = ['pageOptions' => [], 'row' => ''];
+                foreach ($dataSource['data']['cms_page_tie_rows'] as $rowKey => $rowData) {
+                    if ($rowData['store_id'] == $tie['store_id']) {
+                        $cmsPageOptions = [
+                            'pageOptions' => $rowData['cms_page_options'],
+                            'row' => $rowKey,
+                        ];
+                        break;
+                    }
                 }
-            }
-            foreach ($cmsPageOptions['pageOptions'] as $cmsPageOption) {
-                if ($cmsPageOption['value'] === $tie['linked_page_id']) {
-                    $dataSource['data']['cms_page_tie_rows'][$cmsPageOptions['row']]['linked_page_id'] =
-                        $tie['linked_page_id'];
-                    break;
+                foreach ($cmsPageOptions['pageOptions'] as $cmsPageOption) {
+                    if ($cmsPageOption['value'] === $tie['linked_page_id']) {
+                        $dataSource['data']['cms_page_tie_rows'][$cmsPageOptions['row']]['linked_page_id'] =
+                            $tie['linked_page_id'];
+                        break;
+                    }
                 }
             }
         }
