@@ -54,5 +54,5 @@ interface TieManagementInterface
      * @param bool $withCurrentPage add current page node to result
      * @return array ['store_code' => 'linked_page_url']
      */
-    public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = false);
+    public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = true);
 }

@@ -86,7 +86,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      * @param bool $withCurrentPage
      * @return array
      */
-    public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = false)
+    public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = true)
     {
         $attachedStores = $this->cmsPageModel->lookupStoreIds($currentPageId);
         $locale = [];
@@ -98,17 +98,19 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 }
             }
             if ($addLocaleUrl) {
-                $locale[] = [
-                    $this->scopeConfig->getValue(
+                $locale = [
+                    str_replace('_', '-', $this->scopeConfig->getValue(
                         'general/locale/code',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                         $attachedStore
-                    ) => $this->pageHelper->getPageUrl($currentPageId)
+                    )) => $this->pageHelper->getPageUrl($currentPageId)
                 ];
             }
         }
         if ($withCurrentPage) {
-            $locale[$this->localeResolver->getLocale()] = $this->urlInterface->getCurrentUrl();
+            $locale[
+                str_replace('_', '-', $this->localeResolver->getLocale())
+            ] = $this->urlInterface->getCurrentUrl();
         }
         if (count($locale) <= 1) {
             $locale = [];
@@ -130,9 +132,16 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             'page_id' => (int) $currentPageId
         ];
 
+        $existingLinks = $this->tieRepository->get($currentPageId);
+        $existingLinkedPageId = [];
+        foreach ($existingLinks as $existingLink) {
+            $existingLinkedPageId[] = $existingLink['linked_page_id'];
+        }
+
         $linksToDelete = array_values($linksArray);
         $linksToDelete[] = $currentPageId;
-        $this->tieRepository->remove($linksToDelete);
+        $finalLinksToDelete = array_merge($linksToDelete, $existingLinkedPageId);
+        $this->tieRepository->remove($finalLinksToDelete);
 
         if (count($linksArray)) {
             $createdRelations = [];
