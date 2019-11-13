@@ -1,8 +1,6 @@
 <?php
 namespace Flexor\CMSPageTie\Api\Data;
 
-use http\Exception;
-
 /**
  * Interface TieInterface
  * @package Flexor\CMSPageTie\Api\Data
@@ -17,10 +15,10 @@ interface TieInterface
     public function add($relations);
 
     /**
-     * @param $relations
+     * @param $pageIds
      * @return $this
      */
-    public function remove($relations);
+    public function remove($pageIds);
 
     /**
      * @param int $currentPageId

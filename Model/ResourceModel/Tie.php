@@ -33,15 +33,15 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * @param $relations
+     * @param $pageIds
      * @return int The number of affected rows.
      */
-    public function remove($relations)
+    public function remove($pageIds)
     {
         $connection = $this->getConnection();
-        $res = $connection->delete($this->getTieTable(), ['page_id IN (?)' => $relations]);
-        $res += $connection->delete($this->getTieTable(), ['linked_page_id IN (?)' => $relations]);
-        return $res;
+        $result = $connection->delete($this->getTieTable(), ['page_id IN (?)' => $pageIds]);
+        $result += $connection->delete($this->getTieTable(), ['linked_page_id IN (?)' => $pageIds]);
+        return $result;
     }
 
     /**
@@ -59,17 +59,16 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * @param $pageId
      * @param $storeId
-     * @return string
+     * @return array
      */
     public function getLinkedPageId($pageId, $storeId)
     {
         $connection = $this->getConnection();
         $select = $connection->select()->from($this->getTieTable())
-            ->columns('linked_page_id')
             ->where('page_id = :page_id')
             ->where('store_id = :store_id');
 
-        return $connection->fetchOne(
+        return $connection->fetchRow(
             $select,
             [
                 'page_id' => (int) $pageId,

@@ -207,11 +207,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     public function getLinkedCmsIdByStoreId($currentPageId, $storeId)
     {
         $linkedPageId = $this->tieRepository->getLinkedPageId($currentPageId, $storeId);
-        if (isset($linkedPageId)) {
-            $result = $linkedPageId;
-        } else {
-            $result = null;
-        }
+        $result = isset($linkedPageId) ? (int)$linkedPageId['linked_page_id'] : null;
         return $result;
     }
 

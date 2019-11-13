@@ -47,12 +47,12 @@ class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
     }
 
     /**
-     * @param $relations
+     * @param $pageIds
      * @return $this
      */
-    public function remove($relations)
+    public function remove($pageIds)
     {
-        $this->getResource()->remove($relations);
+        $this->getResource()->remove($pageIds);
         return $this;
     }
 
@@ -68,7 +68,7 @@ class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
     /**
      * @param $pageId
      * @param $storeId
-     * @return string
+     * @return array
      */
     public function getLinkedPageId($pageId, $storeId)
     {

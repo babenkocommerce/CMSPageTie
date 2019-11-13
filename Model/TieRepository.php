@@ -1,6 +1,8 @@
 <?php
 namespace Flexor\CMSPageTie\Model;
 
+use Flexor\CMSPageTie\Api\Data\TieInterface;
+
 /**
  * Class TieRepository
  *
@@ -24,7 +26,7 @@ class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
 
     /**
      * @param $relations
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
+     * @return TieInterface
      */
     public function add($relations)
     {
@@ -33,7 +35,7 @@ class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
 
     /**
      * @param $relations
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
+     * @return TieInterface
      */
     public function remove($relations)
     {
@@ -52,7 +54,7 @@ class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
     /**
      * @param $pageId
      * @param $storeId
-     * @return string
+     * @return array
      */
     public function getLinkedPageId($pageId, $storeId)
     {
