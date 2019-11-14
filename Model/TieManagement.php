@@ -98,21 +98,25 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 }
             }
             if ($addLocaleUrl) {
-                $locale = [
+                $locale[] = [
                     str_replace('_', '-', $this->scopeConfig->getValue(
                         'general/locale/code',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                        $attachedStore
+                        (int) $attachedStore
                     )) => $this->pageHelper->getPageUrl($currentPageId)
                 ];
             }
         }
+        $finalLocale = [];
+        foreach ($locale as $locales) {
+            $finalLocale = array_merge($finalLocale, $locales);
+        }
         if ($withCurrentPage) {
-            $locale[
-                str_replace('_', '-', $this->localeResolver->getLocale())
+            $finalLocale[
+            str_replace('_', '-', $this->localeResolver->getLocale())
             ] = $this->urlInterface->getCurrentUrl();
         }
-        return $locale;
+        return $finalLocale;
     }
 
     /**
