@@ -32,16 +32,37 @@ define([
         /**
          * Disable component if it's storeView is used by current CMS Page
          * or if current CMS Page has 'All Store Views' selected
+         * Set value for disabled components to '0'
          * @param selectedStoreViews
          */
         setDisabled: function (selectedStoreViews) {
             var elementStoreView = this.source.get(this.parentScope + '.store_id'),
-                storeViews = selectedStoreViews ? selectedStoreViews : this.source.get('data.store_id');
+                storeViews = selectedStoreViews ? selectedStoreViews : this.source.get('data.store_id'),
+                unlinkData,
+                self = this;
 
-            if (
-                _.contains(storeViews, '0') ||
-                _.contains(storeViews, elementStoreView)
-            ) {
+            if ( _.contains(storeViews, '0') || _.contains(storeViews, elementStoreView) ) {
+                if (!this.source.data.isModalOpened && selectedStoreViews && this.value() !== '0') {
+                    this.source.data.isModalOpened = true;
+                    unlinkData =  _.contains(storeViews, '0') ?
+                        false : this.getIndexedOptions()[this.value()].available_in;
+                    confirm({
+                        content: $t('This page has other pages linked to it, if you continue, ' +
+                            'links will be deleted. Continue?'),
+                        actions: {
+                            confirm: function () {
+                                self.unlink(unlinkData);
+                                self.source.data.isModalOpened = false;
+                            },
+                            cancel: function () {
+                                var oldStoreId = [];
+                                oldStoreId.push(self.source.get('data._first_store_id'));
+                                self.source.set('data.store_id', oldStoreId);
+                                self.source.data.isModalOpened = false;
+                            }
+                        }
+                    });
+                }
                 this.disable();
             } else {
                 this.enable();
@@ -137,7 +158,31 @@ define([
          * @param linkData
          */
         onConfirmUnlink: function (unlinkData, linkData) {
+            this.unlink(unlinkData);
+            if (linkData.available_in && linkData.available_in.length > 1) {
+                this.maybeLink(linkData);
+            } else {
+                this.value(linkData.value);
+            }
+        },
+
+        /**
+         * Unlink pages. All or specified in param
+         * @param unlinkData
+         */
+        unlink: function (unlinkData) {
             var self = this;
+            if (!unlinkData) {
+                _.forEach(self.getIndexedRows(), function (link) {
+                    self.source.set(
+                        'data.cms_page_tie_rows.' +
+                        link.record_id +
+                        '.linked_page_id',
+                        '0'
+                    );
+                });
+                return;
+            }
             _.forEach(unlinkData, function (store_id) {
                 self.source.set(
                     'data.cms_page_tie_rows.' +
@@ -146,11 +191,6 @@ define([
                     '0'
                 )
             });
-            if (linkData.available_in && linkData.available_in.length > 1) {
-                this.maybeLink(linkData);
-            } else {
-                this.value(linkData.value);
-            }
         },
 
         /**
