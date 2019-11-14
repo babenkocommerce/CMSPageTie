@@ -112,9 +112,6 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 str_replace('_', '-', $this->localeResolver->getLocale())
             ] = $this->urlInterface->getCurrentUrl();
         }
-        if (count($locale) <= 1) {
-            $locale = [];
-        }
         return $locale;
     }
 
@@ -229,7 +226,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 $valuesToAdd[] = $this->populateTieArray($pageId, $currentPageArray['page_id'], $currentPageStoreId);
             }
             foreach ($linksArray as $cmsStoreId => $linkedCmsPageId) {
-                if ($cmsStoreId != $storeId) {
+                if ($pageId != $linkedCmsPageId && $cmsStoreId != $storeId) {
                     $valuesToAdd[] = $this->populateTieArray($pageId, $linkedCmsPageId, $cmsStoreId);
                     $valuesToAdd[] = $this->populateTieArray($linkedCmsPageId, $pageId, $storeId);
                 }
