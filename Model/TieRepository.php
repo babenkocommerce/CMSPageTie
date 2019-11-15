@@ -1,6 +1,8 @@
 <?php
 namespace Flexor\CMSPageTie\Model;
 
+use Flexor\CMSPageTie\Api\Data\TieInterface;
+
 /**
  * Class TieRepository
  *
@@ -23,34 +25,21 @@ class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
     }
 
     /**
-     * @param int $currentPageId
-     * @param int $linkedPageId
-     * @param int $storeId
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
+     * @param $relations
+     * @return TieInterface
      */
-    public function add($currentPageId, $linkedPageId, $storeId)
+    public function add($relations)
     {
-        return $this->tieModel->add($currentPageId, $linkedPageId, $storeId);
+        return $this->tieModel->add($relations);
     }
 
     /**
-     * @param int $currentPageId
-     * @param int $linkedPageId
-     * @param int $storeId
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
+     * @param $relations
+     * @return TieInterface
      */
-    public function update($currentPageId, $linkedPageId, $storeId)
+    public function remove($relations)
     {
-        return $this->tieModel->update($currentPageId, $linkedPageId, $storeId);
-    }
-
-    /**
-     * @param int $currentPageId
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
-     */
-    public function remove($currentPageId)
-    {
-        return $this->tieModel->remove($currentPageId);
+        return $this->tieModel->remove($relations);
     }
 
     /**
@@ -60,5 +49,15 @@ class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
     public function get($currentPageId)
     {
         return $this->tieModel->get($currentPageId);
+    }
+
+    /**
+     * @param $pageId
+     * @param $storeId
+     * @return array
+     */
+    public function getLinkedPageId($pageId, $storeId)
+    {
+        return $this->tieModel->getLinkedPageId($pageId, $storeId);
     }
 }

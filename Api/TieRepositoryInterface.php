@@ -1,6 +1,8 @@
 <?php
 namespace Flexor\CMSPageTie\Api;
 
+use Flexor\CMSPageTie\Api\Data\TieInterface;
+
 /**
  * Interface TieRepository
  * @package Flexor\CMSPageTie\Api
@@ -9,26 +11,16 @@ namespace Flexor\CMSPageTie\Api;
 interface TieRepositoryInterface
 {
     /**
-     * @param int $currentPageId
-     * @param int $linkedPageId
-     * @param int $storeId
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
+     * @param $relations
+     * @return TieInterface
      */
-    public function add($currentPageId, $linkedPageId, $storeId);
+    public function add($relations);
 
     /**
-     * @param int $currentPageId
-     * @param int $linkedPageId
-     * @param int $storeId
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
+     * @param $pageIds
+     * @return TieInterface
      */
-    public function update($currentPageId, $linkedPageId, $storeId);
-
-    /**
-     * @param int $currentPageId
-     * @return \Flexor\CMSPageTie\Api\Data\TieInterface
-     */
-    public function remove($currentPageId);
+    public function remove($pageIds);
 
     /**
      * @param int $currentPageId

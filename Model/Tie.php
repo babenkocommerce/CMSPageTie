@@ -25,14 +25,12 @@ class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
     }
 
     /**
-     * @param int $currentPageId
-     * @param int $linkedPageId
-     * @param int $storeId
+     * @param $relations
      * @return $this
      */
-    public function add($currentPageId, $linkedPageId, $storeId)
+    public function add($relations)
     {
-        $this->getResource()->add($currentPageId, $linkedPageId, $storeId);
+        $this->getResource()->add($relations);
         return $this;
     }
 
@@ -49,12 +47,12 @@ class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
     }
 
     /**
-     * @param int $currentPageId
+     * @param $pageIds
      * @return $this
      */
-    public function remove($currentPageId)
+    public function remove($pageIds)
     {
-        $this->getResource()->remove($currentPageId);
+        $this->getResource()->remove($pageIds);
         return $this;
     }
 
@@ -65,6 +63,16 @@ class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
     public function get($currentPageId)
     {
         return $this->getResource()->get($currentPageId);
+    }
+
+    /**
+     * @param $pageId
+     * @param $storeId
+     * @return array
+     */
+    public function getLinkedPageId($pageId, $storeId)
+    {
+        return $this->getResource()->getLinkedPageId($pageId, $storeId);
     }
 
     /**
