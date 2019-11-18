@@ -142,6 +142,7 @@ define([
          */
         onConfirmLink: function (data) {
             var self = this;
+            this.unlink(data.available_in);
             _.forEach(data.available_in, function (store_id) {
                 self.source.set(
                     'data.cms_page_tie_rows.' +
@@ -171,7 +172,10 @@ define([
          * @param unlinkData
          */
         unlink: function (unlinkData) {
-            var self = this;
+            var self = this,
+                elementStoreView = this.source.get(this.parentScope + '.store_id'),
+                unlinkStoreIds = [];
+
             if (!unlinkData) {
                 _.forEach(self.getIndexedRows(), function (link) {
                     self.source.set(
@@ -184,12 +188,23 @@ define([
                 return;
             }
             _.forEach(unlinkData, function (store_id) {
+                if (store_id !== elementStoreView) {
+                    var options = _.indexBy(self.getIndexedRows()[store_id].cms_page_options,'value'),
+                        currentValue = self.getIndexedRows()[store_id]['linked_page_id'];
+
+                    _.forEach(options[currentValue].available_in, function (option_store_id) {
+                        unlinkStoreIds.push(option_store_id);
+                    });
+                }
+                unlinkStoreIds.push(store_id);
+            });
+            _.forEach(_.uniq(unlinkStoreIds), function (store_id) {
                 self.source.set(
                     'data.cms_page_tie_rows.' +
                     self.getIndexedRows()[store_id].record_id +
                     '.linked_page_id',
                     '0'
-                )
+                );
             });
         },
 
