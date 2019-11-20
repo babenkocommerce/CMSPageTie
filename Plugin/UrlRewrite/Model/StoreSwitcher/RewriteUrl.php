@@ -2,7 +2,7 @@
 namespace Flexor\CMSPageTie\Plugin\UrlRewrite\Model\StoreSwitcher;
 
 use Magento\Framework\HTTP\PhpEnvironment\RequestFactory;
-use Flexor\CMSPageTie\Model\TieManagement;
+use Flexor\CMSPageTie\Api\TieManagementInterface;
 use Magento\Framework\UrlInterface as UrlBuilder;
 use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as CmsPageCollection;
 use Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl as StoreRewriteUrl;
@@ -13,14 +13,13 @@ use Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl as StoreRewriteUrl;
  */
 class RewriteUrl
 {
-
     /**
      * @var RequestFactory
      */
     private $requestFactory;
 
     /**
-     * @var TieManagement
+     * @var TieManagementInterface
      */
     private $tieManagement;
 
@@ -35,21 +34,15 @@ class RewriteUrl
     private $urlBuilder;
 
     /**
-     * @var CmsPageModel
-     */
-    private $cmsPageModel;
-
-    /**
      * RewriteUrl constructor.
      * @param RequestFactory $requestFactory
-     * @param TieManagement $tieManagement
+     * @param TieManagementInterface $tieManagement
      * @param CmsPageCollection $cmsPageCollection
      * @param UrlBuilder $urlBuilder
-     * @param CmsPageModel $cmsPageModel
      */
     public function __construct(
         RequestFactory $requestFactory,
-        TieManagement $tieManagement,
+        TieManagementInterface $tieManagement,
         CmsPageCollection $cmsPageCollection,
         UrlBuilder $urlBuilder
     )
