@@ -1,26 +1,66 @@
 <?php
 namespace Flexor\CMSPageTie\Plugin\UrlRewrite\Model\StoreSwitcher;
 
-use Magento\UrlRewrite\Model\UrlFinderInterface;
-use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
+use Magento\Framework\HTTP\PhpEnvironment\RequestFactory;
+use Flexor\CMSPageTie\Model\TieManagement;
+use Magento\Framework\UrlInterface as UrlBuilder;
+use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as CmsPageCollection;
+use Magento\Cms\Model\ResourceModel\Page as CmsPageModel;
+use Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl as StoreRewriteUrl;
 
 /**
- * Class DataProvider
+ * Class RewriteUrl
  * @package Flexor\CMSPageTie\Plugin\UrlRewrite\Model\StoreSwitcher
  */
 class RewriteUrl
 {
+
+    /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
+
+    /**
+     * @var TieManagement
+     */
+    private $tieManagement;
+
+    /**
+     * @var CmsPageCollection
+     */
+    private $cmsPageCollection;
+
+    /**
+     * @var UrlBuilder
+     */
+    private $urlBuilder;
+
+    /**
+     * @var CmsPageModel
+     */
+    private $cmsPageModel;
+
     /**
      * RewriteUrl constructor.
-     * @param UrlFinderInterface $urlFinder
-     * @param \Magento\Framework\HTTP\PhpEnvironment\RequestFactory $requestFactory
+     * @param RequestFactory $requestFactory
+     * @param TieManagement $tieManagement
+     * @param CmsPageCollection $cmsPageCollection
+     * @param UrlBuilder $urlBuilder
+     * @param CmsPageModel $cmsPageModel
      */
     public function __construct(
-        UrlFinderInterface $urlFinder,
-        \Magento\Framework\HTTP\PhpEnvironment\RequestFactory $requestFactory
-    ) {
-        $this->urlFinder = $urlFinder;
+        RequestFactory $requestFactory,
+        TieManagement $tieManagement,
+        CmsPageCollection $cmsPageCollection,
+        UrlBuilder $urlBuilder,
+        CmsPageModel $cmsPageModel
+    )
+    {
         $this->requestFactory = $requestFactory;
+        $this->tieManagement = $tieManagement;
+        $this->cmsPageCollection = $cmsPageCollection;
+        $this->urlBuilder = $urlBuilder;
+        $this->cmsPageModel = $cmsPageModel;
     }
 
     /**
@@ -31,23 +71,22 @@ class RewriteUrl
      * @param $targetUrl
      * @return mixed
      */
-    public function afterSwitch(\Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl $subject, $result, $targetStore, $oldRewrite, $targetUrl)
+    public function afterSwitch(StoreRewriteUrl $subject, $result, $targetStore, $oldRewrite, $targetUrl)
     {
-        $oldStoreId = $oldRewrite->getData()['store_id'];
+        $currentStoreId = $oldRewrite->getData()['store_id'];
         $request = $this->requestFactory->create(['uri' => $targetUrl]);
-
         $urlPath = ltrim($request->getPathInfo(), '/');
-        $oldRewriteForId = $this->urlFinder->findOneByData(
-            [
-                UrlRewrite::REQUEST_PATH => $urlPath,
-                UrlRewrite::STORE_ID => $oldStoreId,
-            ]
-        );
-        if(isset($oldRewriteForId)) {
-            $targetStoreId = $targetStore->getData()['store_id'];
-            $currentPageId = $oldRewriteForId->getByKey('entity_id');
 
+        $currentPageCollection = $this->cmsPageCollection->create()->addFieldToFilter('identifier', $urlPath);
+        $currentPage = $currentPageCollection->getData();
+        if (!empty($currentPage)) {
+            $currentPageIdentifier = (int) array_column($currentPage, 'page_id')[0];
+            $linkedPageId = $this->tieManagement->getLinkedCmsKey($currentPageIdentifier, $currentStoreId);
+            if (isset($linkedPageId)) {
+                return $this->urlBuilder->getUrl(null, ['_direct' => $linkedPageId]);
+            }
         }
+
         return $result;
     }
 }
