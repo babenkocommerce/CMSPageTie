@@ -2,4 +2,7 @@
     <preference for="Flexor\CMSPageTie\Api\TieManagementInterface" type="Flexor\CMSPageTie\Model\TieManagement" />
     <preference for="Flexor\CMSPageTie\Api\Data\TieInterface" type="Flexor\CMSPageTie\Model\Tie" />
     <preference for="Flexor\CMSPageTie\Api\TieRepositoryInterface" type="Flexor\CMSPageTie\Model\TieRepository" />
+    <type name="Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl">
+        <plugin name="Flexor_CMSPageTie_Plugin" type="Flexor\CMSPageTie\Plugin\UrlRewrite\Model\StoreSwitcher\RewriteUrl" />
+    </type>
 </config>

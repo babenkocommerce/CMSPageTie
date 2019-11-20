@@ -5,7 +5,6 @@ use Magento\Framework\HTTP\PhpEnvironment\RequestFactory;
 use Flexor\CMSPageTie\Model\TieManagement;
 use Magento\Framework\UrlInterface as UrlBuilder;
 use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as CmsPageCollection;
-use Magento\Cms\Model\ResourceModel\Page as CmsPageModel;
 use Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl as StoreRewriteUrl;
 
 /**
@@ -52,15 +51,13 @@ class RewriteUrl
         RequestFactory $requestFactory,
         TieManagement $tieManagement,
         CmsPageCollection $cmsPageCollection,
-        UrlBuilder $urlBuilder,
-        CmsPageModel $cmsPageModel
+        UrlBuilder $urlBuilder
     )
     {
         $this->requestFactory = $requestFactory;
         $this->tieManagement = $tieManagement;
         $this->cmsPageCollection = $cmsPageCollection;
         $this->urlBuilder = $urlBuilder;
-        $this->cmsPageModel = $cmsPageModel;
     }
 
     /**
@@ -83,7 +80,7 @@ class RewriteUrl
             $currentPageIdentifier = (int) array_column($currentPage, 'page_id')[0];
             $linkedPageId = $this->tieManagement->getLinkedCmsKey($currentPageIdentifier, $currentStoreId);
             if (isset($linkedPageId)) {
-                return $this->urlBuilder->getUrl(null, ['_direct' => $linkedPageId]);
+                $result = $this->urlBuilder->getUrl(null, ['_direct' => $linkedPageId]);
             }
         }
 
