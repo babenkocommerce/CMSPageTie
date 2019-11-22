@@ -7,7 +7,6 @@ use Magento\Framework\UrlInterface as UrlBuilder;
 use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as CmsPageCollection;
 use Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl as StoreRewriteUrl;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Cms\Model\ResourceModel\PageFactory as CmsPageModelFactory;
 
 /**
  * Class RewriteUrl
@@ -40,10 +39,6 @@ class RewriteUrl
      */
     private $scopeConfig;
 
-    /**
-     * @var CmsPageModelFactory
-     */
-    private $cmsPageModelFactory;
 
     /**
      * RewriteUrl constructor.
@@ -59,8 +54,7 @@ class RewriteUrl
         TieManagementInterface $tieManagement,
         CmsPageCollection $cmsPageCollection,
         UrlBuilder $urlBuilder,
-        ScopeConfigInterface $scopeConfig,
-        CmsPageModelFactory $cmsPageModelFactory
+        ScopeConfigInterface $scopeConfig
     )
     {
         $this->requestFactory = $requestFactory;
@@ -68,7 +62,6 @@ class RewriteUrl
         $this->cmsPageCollection = $cmsPageCollection;
         $this->urlBuilder = $urlBuilder;
         $this->scopeConfig = $scopeConfig;
-        $this->cmsPageModelFactory = $cmsPageModelFactory;
     }
 
     /**
@@ -81,7 +74,7 @@ class RewriteUrl
      */
     public function afterSwitch(StoreRewriteUrl $subject, $result, $targetStore, $oldRewrite, $targetUrl)
     {
-        $currentStoreId = $oldRewrite->getData()['store_id'];
+        $targetStoreId = $oldRewrite->getData()['store_id'];
         $request = $this->requestFactory->create(['uri' => $targetUrl]);
         $urlPath = ltrim($request->getPathInfo(), '/');
         $isStoreCodeEnabled = $this->scopeConfig->getValue(
@@ -94,12 +87,11 @@ class RewriteUrl
         $currentPage = $currentPageCollection->getData();
         if (!empty($currentPage)) {
             $currentPageIdentifier = (int) array_column($currentPage, 'page_id')[0];
-            $linkedPageName = $this->tieManagement->getLinkedCmsKey($currentPageIdentifier, $currentStoreId);
-            $linkedPageId = $this->tieManagement->getLinkedCmsIdByStoreId($currentPageIdentifier, $currentStoreId);
-            $attachedStores = $this->cmsPageModelFactory->create()->lookupStoreIds($linkedPageId);
+            $linkedPageName = $this->tieManagement->getLinkedCmsKey($currentPageIdentifier, $targetStoreId);
+            $linkedPageId = $this->tieManagement->getLinkedCmsIdByStoreId($currentPageIdentifier, $targetStoreId);
 
             if (isset($linkedPageId) && $linkedPageId != 0) {
-                $this->urlBuilder->setScope($attachedStores[0]);
+                $this->urlBuilder->setScope($targetStoreId);
                 $result = $this->urlBuilder->getUrl(null, ['_direct' => $linkedPageName]);
             }
         }
