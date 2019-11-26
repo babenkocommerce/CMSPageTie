@@ -1,10 +1,9 @@
 <?php
+
 namespace Flexor\CMSPageTie\Model\ResourceModel;
 
 /**
- * Class Tie
- *
- * @package Flexor\CMSPageTie\Model\ResourceModel
+ * Class Tie - resource model for processing DB data for CMS page ties
  */
 class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {

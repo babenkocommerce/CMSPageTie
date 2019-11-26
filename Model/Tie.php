@@ -1,10 +1,9 @@
 <?php
+
 namespace Flexor\CMSPageTie\Model;
 
 /**
- * Class Tie
- *
- * @package Flexor\CMSPageTie\Model
+ * Class Tie - tie model
  */
 class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
 {

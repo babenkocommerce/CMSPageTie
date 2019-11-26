@@ -1,4 +1,5 @@
 <?php
+
 namespace Flexor\CMSPageTie\Plugin\UrlRewrite\Model\StoreSwitcher;
 
 use Magento\Framework\HTTP\PhpEnvironment\RequestFactory;
@@ -9,8 +10,7 @@ use Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl as StoreRewriteUrl;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
- * Class RewriteUrl
- * @package Flexor\CMSPageTie\Plugin\UrlRewrite\Model\StoreSwitcher
+ * Class RewriteUrl - plugin to process the linking functionality on store switch
  */
 class RewriteUrl
 {
@@ -39,15 +39,14 @@ class RewriteUrl
      */
     private $scopeConfig;
 
-
     /**
      * RewriteUrl constructor.
+     *
      * @param RequestFactory $requestFactory
      * @param TieManagementInterface $tieManagement
      * @param CmsPageCollection $cmsPageCollection
      * @param UrlBuilder $urlBuilder
      * @param ScopeConfigInterface $scopeConfig
-     * @param CmsPageModelFactory $cmsPageModelFactory
      */
     public function __construct(
         RequestFactory $requestFactory,
@@ -55,8 +54,7 @@ class RewriteUrl
         CmsPageCollection $cmsPageCollection,
         UrlBuilder $urlBuilder,
         ScopeConfigInterface $scopeConfig
-    )
-    {
+    ) {
         $this->requestFactory = $requestFactory;
         $this->tieManagement = $tieManagement;
         $this->cmsPageCollection = $cmsPageCollection;
@@ -78,10 +76,11 @@ class RewriteUrl
         $request = $this->requestFactory->create(['uri' => $targetUrl]);
         $urlPath = ltrim($request->getPathInfo(), '/');
         $isStoreCodeEnabled = $this->scopeConfig->getValue(
-            'web/url/use_store', \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            'web/url/use_store',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
         if ($isStoreCodeEnabled) {
-            $urlPath = substr($urlPath,strrpos($urlPath,"/")+1);
+            $urlPath = substr($urlPath, strrpos($urlPath, "/") + 1);
         }
         $currentPageCollection = $this->cmsPageCollection->create()->addFieldToFilter('identifier', $urlPath);
         $currentPage = $currentPageCollection->getData();

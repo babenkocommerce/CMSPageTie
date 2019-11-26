@@ -1,22 +1,22 @@
 <?php
+
 namespace Flexor\CMSPageTie\Model;
 
 use Flexor\CMSPageTie\Api\Data\TieInterface;
 
 /**
- * Class TieRepository
- *
- * @package Flexor\CMSPageTie\Model
+ * Class TieRepository - repository for processing data models for cms page ties
  */
 class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
 {
     /**
-     * @var
+     * @var \Flexor\CMSPageTie\Api\Data\TieInterface
      */
     private $tieModel;
 
     /**
      * TieRepository constructor.
+     *
      * @param \Flexor\CMSPageTie\Api\Data\TieInterfaceFactory $tieModelFactory
      */
     public function __construct(\Flexor\CMSPageTie\Api\Data\TieInterfaceFactory $tieModelFactory)

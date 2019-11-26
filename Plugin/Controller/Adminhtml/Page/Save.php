@@ -2,6 +2,9 @@
 
 namespace Flexor\CMSPageTie\Plugin\Controller\Adminhtml\Page;
 
+/**
+ * Class Save - plugin for \Magento\Cms\Controller\Adminhtml\Page\Save controller
+ */
 class Save
 {
     /**

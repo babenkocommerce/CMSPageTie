@@ -1,9 +1,10 @@
 <?php
+
 namespace Flexor\CMSPageTie\Api\Data;
 
 /**
  * Interface TieInterface
- * @package Flexor\CMSPageTie\Api\Data
+ *
  * @api
  */
 interface TieInterface
@@ -25,5 +26,4 @@ interface TieInterface
      * @return mixed
      */
     public function get($currentPageId);
-
 }

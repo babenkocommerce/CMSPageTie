@@ -1,11 +1,12 @@
 <?php
+
 namespace Flexor\CMSPageTie\Api;
 
 use Flexor\CMSPageTie\Api\Data\TieInterface;
 
 /**
  * Interface TieRepository
- * @package Flexor\CMSPageTie\Api
+ *
  * @api
  */
 interface TieRepositoryInterface
