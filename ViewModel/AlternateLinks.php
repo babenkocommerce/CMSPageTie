@@ -8,9 +8,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * ViewModel of Alternative Lang Links
- * Class AlternateLinks
- * @package Flexor\CMSPageTie\ViewModel
+ * Class AlternateLinks - ViewModel for Alternative Language Links
  */
 class AlternateLinks implements ArgumentInterface
 {
@@ -31,6 +29,7 @@ class AlternateLinks implements ArgumentInterface
 
     /**
      * AlternateLinks constructor.
+     *
      * @param TieManagementInterface $tieManagement
      * @param Page $page
      * @param StoreManagerInterface $storeManager
@@ -47,6 +46,7 @@ class AlternateLinks implements ArgumentInterface
 
     /**
      * Retrieves array of available linked CMS pages for all storeViews
+     *
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

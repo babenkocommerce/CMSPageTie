@@ -1,9 +1,9 @@
 <?php
+
 namespace Flexor\CMSPageTie\Ui\Component\Form\Store;
 
 /**
- * Class StoreViews
- * @package Flexor\CMSPageTie\Ui\Component\Form\Store
+ * Class StoreViews - used for populating valid cms page options for store views drop-down
  */
 class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Options
 {
@@ -14,6 +14,7 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
 
     /**
      * StoreViews constructor.
+     *
      * @param \Magento\Store\Model\System\Store $systemStore
      * @param \Magento\Framework\Escaper $escaper
      * @param \Magento\Cms\Model\ResourceModel\Page\CollectionFactory $cmsPageCollectionFactory
@@ -29,6 +30,7 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
 
     /**
      * Return array of store view ids & labels for Dynamic Rows ui-component
+     *
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
@@ -54,7 +56,7 @@ class StoreViews extends \Magento\Store\Ui\Component\Listing\Column\Store\Option
             ]];
             foreach ($cmsPageCollection as $cmsPage) {
                 $storeIds = $cmsPage->getStoreId();
-                if ((count($storeIds) != count($storeCollection)) and (in_array($storeId, $storeIds))) {
+                if ((count($storeIds) != count($storeCollection)) && (in_array($storeId, $storeIds))) {
                     $cmsPageOptions[] = [
                         'label' => $cmsPage->getTitle(),
                         'value' => $cmsPage->getId(),

@@ -1,4 +1,5 @@
 <?php
+
 namespace Flexor\CMSPageTie\Model;
 
 use Magento\Cms\Helper\Page as PageHelper;
@@ -9,8 +10,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use Magento\Framework\UrlInterface as UrlInterface;
 
 /**
- * Class TieManagement
- * @package Flexor\CMSPageTie\Model
+ * Class TieManagement - tie management
  */
 class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
 {
@@ -112,9 +112,8 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             $finalLocale = array_merge($finalLocale, $locales);
         }
         if ($withCurrentPage) {
-            $finalLocale[
-            str_replace('_', '-', $this->localeResolver->getLocale())
-            ] = $this->urlInterface->getCurrentUrl();
+            $finalLocale[str_replace('_', '-', $this->localeResolver->getLocale())]
+                = $this->urlInterface->getCurrentUrl();
         }
         return $finalLocale;
     }
