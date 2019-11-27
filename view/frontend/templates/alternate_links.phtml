@@ -7,7 +7,5 @@ $viewModel = $block->getData('viewModel');
 $alternativeLinks = $viewModel->getAlternativeLinks();
 ?>
 <?php foreach ($alternativeLinks as $alternativeLink) : ?>
-    <?php foreach ($alternativeLink as $localeCode => $link) : ?>
-        <link rel="alternate" hreflang="<?= $block->escapeHtmlAttr($localeCode) ?>" href="<?= $block->escapeHtmlAttr($link) ?>"/>
-    <?php endforeach; ?>
+    <link rel="alternate" hreflang="<?= $block->escapeHtmlAttr($alternativeLink['locale']) ?>" href="<?= $block->escapeHtmlAttr($alternativeLink['url']) ?>"/>
 <?php endforeach; ?>

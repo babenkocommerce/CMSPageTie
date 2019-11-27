@@ -92,8 +92,9 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         $locales = [];
         if ($withCurrentPage) {
             $locales[] = [
-                str_replace('_', '-', $this->localeResolver->getLocale())
-                => $this->urlInterface->getCurrentUrl()];
+                'locale' => str_replace('_', '-', $this->localeResolver->getLocale()),
+                'url' => $this->urlInterface->getCurrentUrl()
+            ];
         }
         foreach ($getLinkedPages as $getLinkedPage) {
             $attachedStores = $this->cmsPageModel->lookupStoreIds($getLinkedPage['linked_page_id']);
@@ -101,11 +102,12 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 $linkedPageName = $this->getLinkedCmsKey($currentPageId, $targetStoreId);
                 $this->urlInterface->setScope($targetStoreId);
                 $record = [
-                    str_replace('_', '-', $this->scopeConfig->getValue(
+                    'locale' => str_replace('_', '-', $this->scopeConfig->getValue(
                         'general/locale/code',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                         (int)$getLinkedPage['store_id']
-                    )) => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
+                    )),
+                    'url' => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
                 ];
                 if (!in_array($record, $locales)) {
                     $locales[] = $record;
