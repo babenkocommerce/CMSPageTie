@@ -4,7 +4,6 @@ namespace Flexor\CMSPageTie\Ui\Component;
 
 /**
  * Custom Form Ui component for CMS Page
- * @package Flexor\CMSPageTie\Ui\Component
  */
 class Form extends \Magento\Ui\Component\Form
 {
