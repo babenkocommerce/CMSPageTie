@@ -90,6 +90,11 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     {
         $getLinkedPages = $this->tieRepository->get($currentPageId);
         $locales = [];
+        if ($withCurrentPage) {
+            $locales[] = [
+                str_replace('_', '-', $this->localeResolver->getLocale())
+                => $this->urlInterface->getCurrentUrl()];
+        }
         foreach ($getLinkedPages as $getLinkedPage) {
             $attachedStores = $this->cmsPageModel->lookupStoreIds($getLinkedPage['linked_page_id']);
             foreach ($attachedStores as $key => $targetStoreId) {
@@ -107,12 +112,6 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 }
             }
         }
-        if ($withCurrentPage) {
-            $locales[] = [
-            str_replace('_', '-', $this->localeResolver->getLocale())
-             =>  $this->urlInterface->getCurrentUrl()];
-        }
-
         return $locales;
     }
 
