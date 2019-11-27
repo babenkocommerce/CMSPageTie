@@ -89,33 +89,32 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = true)
     {
         $getLinkedPages = $this->tieRepository->get($currentPageId);
-        $locale = [];
+        $locales = [];
+        if ($withCurrentPage) {
+            $locales[] = [
+                'locale' => str_replace('_', '-', $this->localeResolver->getLocale()),
+                'url' => $this->urlInterface->getCurrentUrl()
+            ];
+        }
         foreach ($getLinkedPages as $getLinkedPage) {
             $attachedStores = $this->cmsPageModel->lookupStoreIds($getLinkedPage['linked_page_id']);
             foreach ($attachedStores as $key => $targetStoreId) {
                 $linkedPageName = $this->getLinkedCmsKey($currentPageId, $targetStoreId);
                 $this->urlInterface->setScope($targetStoreId);
-                $locale[] = [
-                    str_replace('_', '-', $this->scopeConfig->getValue(
+                $record = [
+                    'locale' => str_replace('_', '-', $this->scopeConfig->getValue(
                         'general/locale/code',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
                         (int)$getLinkedPage['store_id']
-                    )) => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
+                    )),
+                    'url' => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
                 ];
+                if (!in_array($record, $locales)) {
+                    $locales[] = $record;
+                }
             }
         }
-        $finalLocale = [];
-        foreach ($locale as $locales) {
-            foreach ($locales as $locale => $url) {
-                $finalLocale[$locale] = $url;
-            }
-        }
-        if ($withCurrentPage) {
-            $finalLocale[str_replace('_', '-', $this->localeResolver->getLocale())]
-                = $this->urlInterface->getCurrentUrl();
-        }
-
-        return $finalLocale;
+        return $locales;
     }
 
     /**
