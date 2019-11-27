@@ -88,34 +88,33 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = true)
     {
-        $attachedStores = $this->cmsPageModel->lookupStoreIds($currentPageId);
-        $locale = [];
-        foreach ($attachedStores as $attachedStore) {
-            $addLocaleUrl = true;
-            foreach ($locale as $existing) {
-                if ($this->pageHelper->getPageUrl($currentPageId) == $existing) {
-                    $addLocaleUrl = false;
-                }
-            }
-            if ($addLocaleUrl) {
-                $locale[] = [
-                    str_replace('_', '-', $this->scopeConfig->getValue(
+        $getLinkedPages = $this->tieRepository->get($currentPageId);
+        $locales = [];
+        if ($withCurrentPage) {
+            $locales[] = [
+                'locale' => str_replace('_', '-', $this->localeResolver->getLocale()),
+                'url' => $this->urlInterface->getCurrentUrl()
+            ];
+        }
+        foreach ($getLinkedPages as $getLinkedPage) {
+            $attachedStores = $this->cmsPageModel->lookupStoreIds($getLinkedPage['linked_page_id']);
+            foreach ($attachedStores as $key => $targetStoreId) {
+                $linkedPageName = $this->getLinkedCmsKey($currentPageId, $targetStoreId);
+                $this->urlInterface->setScope($targetStoreId);
+                $record = [
+                    'locale' => str_replace('_', '-', $this->scopeConfig->getValue(
                         'general/locale/code',
                         \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                        (int) $attachedStore
-                    )) => $this->pageHelper->getPageUrl($currentPageId)
+                        (int)$getLinkedPage['store_id']
+                    )),
+                    'url' => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
                 ];
+                if (!in_array($record, $locales)) {
+                    $locales[] = $record;
+                }
             }
         }
-        $finalLocale = [];
-        foreach ($locale as $locales) {
-            $finalLocale = array_merge($finalLocale, $locales);
-        }
-        if ($withCurrentPage) {
-            $finalLocale[str_replace('_', '-', $this->localeResolver->getLocale())]
-                = $this->urlInterface->getCurrentUrl();
-        }
-        return $finalLocale;
+        return $locales;
     }
 
     /**
