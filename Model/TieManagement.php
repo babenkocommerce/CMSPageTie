@@ -9,7 +9,7 @@ use Magento\Cms\Model\ResourceModel\Page as CmsPageModel;
 use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use Magento\Framework\UrlInterface as UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as CmsPageCollection;
+use Magento\Store\Model\System\Store as SystemStore;
 
 /**
  * Class TieManagement - tie management
@@ -52,6 +52,17 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     private $urlInterface;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var SystemStore
+     */
+    private $systemStore;
+
+
+    /**
      * TieManagement constructor.
      *
      * @param PageHelper $pageHelper
@@ -61,6 +72,8 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      * @param CmsPageModel $cmsPageModel
      * @param ScopeConfig $scopeConfig
      * @param UrlInterface $urlInterface
+     * @param StoreManagerInterface $storeManager
+     * @param SystemStore $systemStore
      */
     public function __construct(
         PageHelper $pageHelper,
@@ -71,7 +84,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         ScopeConfig $scopeConfig,
         UrlInterface $urlInterface,
         StoreManagerInterface $storeManager,
-        CmsPageCollection $collectionFactory
+        SystemStore $systemStore
     ) {
         $this->localeResolver = $localeResolver;
         $this->pageHelper = $pageHelper;
@@ -81,7 +94,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         $this->scopeConfig = $scopeConfig;
         $this->urlInterface = $urlInterface;
         $this->storeManager = $storeManager;
-        $this->collectionFactory = $collectionFactory;
+        $this->systemStore = $systemStore;
     }
 
     /**
@@ -302,10 +315,16 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     {
         try {
             $storeGroupId = $this->storeManager->getStore($storeId)->getStoreGroupId();
-            $storesByGroupIds = $this->tieRepository->getStoreIdsByGroupId($storeGroupId);
+            $storeCollections = $this->systemStore->getStoreCollection();
+            $storesByGroupIds = [];
+            foreach($storeCollections as $store) {
+                if ($store->getGroupId() === $storeGroupId) {
+                    $storesByGroupIds[] = $store->getGroupId();
+                }
+            }
             $storeIds = [];
             foreach ($storesByGroupIds as $storesByGroupId) {
-                $storeIds[] = $storesByGroupId['store_id'];
+                $storeIds[] = $storesByGroupId;
             }
             $getLinkedPages = $this->tieRepository->getPagesByStoreId($currentPageId, $storeIds);
         } catch (\Exception $e) {

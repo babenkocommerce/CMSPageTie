@@ -63,15 +63,6 @@ class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
     }
 
     /**
-     * @param $groupId
-     * @return mixed
-     */
-    public function getStoreIdsByGroupId($groupId)
-    {
-        return $this->tieModel->getStoreIdsByGroupId($groupId);
-    }
-
-    /**
      * @param $pageId
      * @param $storeIds
      * @return mixed

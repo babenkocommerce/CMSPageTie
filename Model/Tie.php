@@ -75,15 +75,6 @@ class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
     }
 
     /**
-     * @param $groupId
-     * @return array
-     */
-    public function getStoreIdsByGroupId($groupId)
-    {
-        return $this->getResource()->getStoreIdsByGroupId($groupId);
-    }
-
-    /**
      * @param $pageId
      * @param $storeIds
      * @return array
