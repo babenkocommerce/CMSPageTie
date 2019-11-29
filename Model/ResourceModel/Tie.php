@@ -77,6 +77,38 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
+     * Get store id based on group id
+     *
+     * @param $groupId
+     * @return array
+     */
+    public function getStoreIdsByGroupId($groupId)
+    {
+        $connection = $this->getConnection();
+        $select = $connection->select()->from($this->getTable('store'))
+            ->where('group_id = ?', (int) $groupId);
+
+        return $connection->fetchAll($select);
+    }
+
+    /**
+     * Get linked pages by store id based on group id
+     *
+     * @param $pageId
+     * @param $storeIds
+     * @return array
+     */
+    public function getPagesByStoreId($pageId, $storeIds)
+    {
+        $connection = $this->getConnection();
+        $select = $connection->select()->from($this->getTieTable())
+            ->where('page_id = ?', $pageId)
+            ->where('store_id IN (?)', $storeIds);
+
+        return $connection->fetchAll($select);
+    }
+
+    /**
      * Get Tie table name
      *
      * @return string

@@ -8,6 +8,8 @@ use Magento\Cms\Api\PageRepositoryInterface as PageRepository;
 use Magento\Cms\Model\ResourceModel\Page as CmsPageModel;
 use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use Magento\Framework\UrlInterface as UrlInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Cms\Model\ResourceModel\Page\CollectionFactory as CmsPageCollection;
 
 /**
  * Class TieManagement - tie management
@@ -67,7 +69,9 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         TieRepository $tieRepository,
         CmsPageModel $cmsPageModel,
         ScopeConfig $scopeConfig,
-        UrlInterface $urlInterface
+        UrlInterface $urlInterface,
+        StoreManagerInterface $storeManager,
+        CmsPageCollection $collectionFactory
     ) {
         $this->localeResolver = $localeResolver;
         $this->pageHelper = $pageHelper;
@@ -76,6 +80,8 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         $this->cmsPageModel = $cmsPageModel;
         $this->scopeConfig = $scopeConfig;
         $this->urlInterface = $urlInterface;
+        $this->storeManager = $storeManager;
+        $this->collectionFactory = $collectionFactory;
     }
 
     /**
@@ -88,13 +94,21 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = true)
     {
-        $getLinkedPages = $this->tieRepository->get($currentPageId);
+        $storeBasedLinks = $this->scopeConfig->getValue(
+            'web/seo/only_store_based_links',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         $locales = [];
         if ($withCurrentPage) {
             $locales[] = [
                 'locale' => str_replace('_', '-', $this->localeResolver->getLocale()),
                 'url' => $this->urlInterface->getCurrentUrl()
             ];
+        }
+        if ($storeBasedLinks) {
+            $getLinkedPages = $this->getGroupBasedPages($currentPageId, $storeId);
+        } else {
+            $getLinkedPages = $this->tieRepository->get($currentPageId);
         }
         foreach ($getLinkedPages as $getLinkedPage) {
             $attachedStores = $this->cmsPageModel->lookupStoreIds($getLinkedPage['linked_page_id']);
@@ -275,5 +289,28 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             }
         }
         return $result;
+    }
+
+    /**
+     * Get store based cms pages
+     *
+     * @param $currentPageId
+     * @param $storeId
+     * @return array|mixed
+     */
+    private function getGroupBasedPages($currentPageId, $storeId)
+    {
+        try {
+            $storeGroupId = $this->storeManager->getStore($storeId)->getStoreGroupId();
+            $storesByGroupIds = $this->tieRepository->getStoreIdsByGroupId($storeGroupId);
+            $storeIds = [];
+            foreach ($storesByGroupIds as $storesByGroupId) {
+                $storeIds[] = $storesByGroupId['store_id'];
+            }
+            $getLinkedPages = $this->tieRepository->getPagesByStoreId($currentPageId, $storeIds);
+        } catch (\Exception $e) {
+            $getLinkedPages = [];
+        }
+        return $getLinkedPages;
     }
 }
