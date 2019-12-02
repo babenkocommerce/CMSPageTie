@@ -8,6 +8,8 @@ use Magento\Cms\Api\PageRepositoryInterface as PageRepository;
 use Magento\Cms\Model\ResourceModel\Page as CmsPageModel;
 use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use Magento\Framework\UrlInterface as UrlInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\System\Store as SystemStore;
 
 /**
  * Class TieManagement - tie management
@@ -50,6 +52,17 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     private $urlInterface;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var SystemStore
+     */
+    private $systemStore;
+
+
+    /**
      * TieManagement constructor.
      *
      * @param PageHelper $pageHelper
@@ -59,6 +72,8 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      * @param CmsPageModel $cmsPageModel
      * @param ScopeConfig $scopeConfig
      * @param UrlInterface $urlInterface
+     * @param StoreManagerInterface $storeManager
+     * @param SystemStore $systemStore
      */
     public function __construct(
         PageHelper $pageHelper,
@@ -67,7 +82,9 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         TieRepository $tieRepository,
         CmsPageModel $cmsPageModel,
         ScopeConfig $scopeConfig,
-        UrlInterface $urlInterface
+        UrlInterface $urlInterface,
+        StoreManagerInterface $storeManager,
+        SystemStore $systemStore
     ) {
         $this->localeResolver = $localeResolver;
         $this->pageHelper = $pageHelper;
@@ -76,6 +93,8 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         $this->cmsPageModel = $cmsPageModel;
         $this->scopeConfig = $scopeConfig;
         $this->urlInterface = $urlInterface;
+        $this->storeManager = $storeManager;
+        $this->systemStore = $systemStore;
     }
 
     /**
@@ -88,13 +107,21 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = true)
     {
-        $getLinkedPages = $this->tieRepository->get($currentPageId);
+        $storeBasedLinks = $this->scopeConfig->getValue(
+            'web/seo/only_store_based_links',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
         $locales = [];
         if ($withCurrentPage) {
             $locales[] = [
                 'locale' => str_replace('_', '-', $this->localeResolver->getLocale()),
                 'url' => $this->urlInterface->getCurrentUrl()
             ];
+        }
+        if ($storeBasedLinks) {
+            $getLinkedPages = $this->getGroupBasedPages($currentPageId, $storeId);
+        } else {
+            $getLinkedPages = $this->tieRepository->get($currentPageId);
         }
         foreach ($getLinkedPages as $getLinkedPage) {
             $attachedStores = $this->cmsPageModel->lookupStoreIds($getLinkedPage['linked_page_id']);
@@ -275,5 +302,34 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             }
         }
         return $result;
+    }
+
+    /**
+     * Get store based cms pages
+     *
+     * @param $currentPageId
+     * @param $storeId
+     * @return array|mixed
+     */
+    private function getGroupBasedPages($currentPageId, $storeId)
+    {
+        try {
+            $storeGroupId = $this->storeManager->getStore($storeId)->getStoreGroupId();
+            $storeCollections = $this->systemStore->getStoreCollection();
+            $storesByGroupIds = [];
+            foreach($storeCollections as $store) {
+                if ($store->getGroupId() === $storeGroupId) {
+                    $storesByGroupIds[] = $store->getGroupId();
+                }
+            }
+            $storeIds = [];
+            foreach ($storesByGroupIds as $storesByGroupId) {
+                $storeIds[] = $storesByGroupId;
+            }
+            $getLinkedPages = $this->tieRepository->getPagesByStoreId($currentPageId, $storeIds);
+        } catch (\Exception $e) {
+            $getLinkedPages = [];
+        }
+        return $getLinkedPages;
     }
 }

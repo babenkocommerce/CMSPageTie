@@ -3,6 +3,7 @@
 namespace Flexor\CMSPageTie\Model;
 
 use Flexor\CMSPageTie\Api\Data\TieInterface;
+use Flexor\CMSPageTie\Api\Data\TieInterfaceFactory;
 
 /**
  * Class TieRepository - repository for processing data models for cms page ties
@@ -10,16 +11,16 @@ use Flexor\CMSPageTie\Api\Data\TieInterface;
 class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
 {
     /**
-     * @var \Flexor\CMSPageTie\Api\Data\TieInterface
+     * @var TieInterface
      */
     private $tieModel;
 
     /**
      * TieRepository constructor.
      *
-     * @param \Flexor\CMSPageTie\Api\Data\TieInterfaceFactory $tieModelFactory
+     * @param TieInterfaceFactory $tieModelFactory
      */
-    public function __construct(\Flexor\CMSPageTie\Api\Data\TieInterfaceFactory $tieModelFactory)
+    public function __construct(TieInterfaceFactory $tieModelFactory)
     {
         $this->tieModel = $tieModelFactory->create();
     }
@@ -59,5 +60,15 @@ class TieRepository implements \Flexor\CMSPageTie\Api\TieRepositoryInterface
     public function getLinkedPageId($pageId, $storeId)
     {
         return $this->tieModel->getLinkedPageId($pageId, $storeId);
+    }
+
+    /**
+     * @param $pageId
+     * @param $storeIds
+     * @return mixed
+     */
+    public function getPagesByStoreId($pageId, $storeIds)
+    {
+        return $this->tieModel->getPagesByStoreId($pageId, $storeIds);
     }
 }

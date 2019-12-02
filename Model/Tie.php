@@ -8,14 +8,14 @@ namespace Flexor\CMSPageTie\Model;
 class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
 {
     /**
-     * @var \Flexor\CMSPageTie\Model\ResourceModel\Tie
+     * @var ResourceModel\Tie
      */
     private $resourceTie;
 
     /**
      * Constructor
      *
-     * @param \Flexor\CMSPageTie\Model\ResourceModel\Tie $resourceTie,
+     * @param ResourceModel\Tie $resourceTie,
      * @return void
      */
     public function __construct(ResourceModel\Tie $resourceTie)
@@ -75,7 +75,17 @@ class Tie implements \Flexor\CMSPageTie\Api\Data\TieInterface
     }
 
     /**
-     * @return \Flexor\CMSPageTie\Model\ResourceModel\Tie
+     * @param $pageId
+     * @param $storeIds
+     * @return array
+     */
+    public function getPagesByStoreId($pageId, $storeIds)
+    {
+        return $this->getResource()->getPagesByStoreId($pageId, $storeIds);
+    }
+
+    /**
+     * @return ResourceModel\Tie
      */
     protected function getResource()
     {
