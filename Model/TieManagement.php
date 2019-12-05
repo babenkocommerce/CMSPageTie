@@ -61,7 +61,6 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      */
     private $systemStore;
 
-
     /**
      * TieManagement constructor.
      *
@@ -317,7 +316,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             $storeGroupId = $this->storeManager->getStore($storeId)->getStoreGroupId();
             $storeCollections = $this->systemStore->getStoreCollection();
             $storesByGroupIds = [];
-            foreach($storeCollections as $store) {
+            foreach ($storeCollections as $store) {
                 if ($store->getGroupId() === $storeGroupId) {
                     $storesByGroupIds[] = $store->getGroupId();
                 }
