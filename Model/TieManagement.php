@@ -140,6 +140,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
                 }
             }
         }
+        $this->urlInterface->setScope($storeId);
         return $locales;
     }
 
