@@ -10,13 +10,12 @@ namespace Flexor\CMSPageTie\Api;
 interface TieManagementInterface
 {
     /**
-     * Get URL key for linked CMS page by targeted store view id
+     * Get URL key for CMS page by page id
      *
-     * @param $currentPageId
-     * @param $targetStoreId
+     * @param $pageId
      * @return string
      */
-    public function getLinkedCmsKey($currentPageId, $targetStoreId);
+    public function getCmsPageUrlKey($pageId);
 
     /**
      * Get linked CMS array in  next format

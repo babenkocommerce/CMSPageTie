@@ -103,6 +103,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
      * @param $storeId
      * @param bool $withCurrentPage
      * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getLinkedPageKeys($currentPageId, $storeId, $withCurrentPage = true)
     {
@@ -110,33 +111,47 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             'web/seo/only_store_based_links',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
+        $currentWebsiteId = $this->urlInterface->getScope()->getWebsiteId();
         $locales = [];
-        if ($withCurrentPage) {
-            $locales[] = [
-                'locale' => str_replace('_', '-', $this->localeResolver->getLocale()),
-                'url' => $this->urlInterface->getCurrentUrl()
-            ];
+        $currentPageStores = $this->pageRepository->getById($currentPageId)->getStores();
+        if (!$withCurrentPage && (($key = array_search($storeId, $currentPageStores)) !== false)) {
+            unset($currentPageStores[$key]);
         }
         if ($storeBasedLinks) {
-            $getLinkedPages = $this->getGroupBasedPages($currentPageId, $storeId);
+            $storesByGroupIds = $this->getStoresByGroupIds($storeId);
+            $linkedPages = $this->tieRepository->getPagesByStoreId($currentPageId, $storesByGroupIds);
+            foreach ($currentPageStores as $key => $currentPageStore) {
+                if (!in_array($currentPageStore, $storesByGroupIds)) {
+                    unset($currentPageStores[$key]);
+                }
+            }
         } else {
-            $getLinkedPages = $this->tieRepository->get($currentPageId);
+            $linkedPages = $this->tieRepository->get($currentPageId);
         }
-        foreach ($getLinkedPages as $getLinkedPage) {
-            $attachedStores = $this->cmsPageModel->lookupStoreIds($getLinkedPage['linked_page_id']);
+        foreach ($currentPageStores as $currentPageStore) {
+            $linkedPages[] = [
+                'page_id' => $currentPageId,
+                'linked_page_id' => $currentPageId,
+                'store_id' => $currentPageStore
+            ];
+        }
+        foreach ($linkedPages as $linkedPage) {
+            $attachedStores = $this->cmsPageModel->lookupStoreIds($linkedPage['linked_page_id']);
             foreach ($attachedStores as $key => $targetStoreId) {
-                $linkedPageName = $this->getLinkedCmsKey($currentPageId, $targetStoreId);
+                $linkedPageName = $this->getCmsPageUrlKey($linkedPage['linked_page_id']);
                 $this->urlInterface->setScope($targetStoreId);
-                $record = [
-                    'locale' => str_replace('_', '-', $this->scopeConfig->getValue(
-                        'general/locale/code',
-                        \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                        (int)$getLinkedPage['store_id']
-                    )),
-                    'url' => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
-                ];
-                if (!in_array($record, $locales)) {
-                    $locales[] = $record;
+                if ($this->urlInterface->getScope()->getWebsiteId() === $currentWebsiteId) {
+                    $record = [
+                        'locale' => str_replace('_', '-', $this->scopeConfig->getValue(
+                            'general/locale/code',
+                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                            (int)$linkedPage['store_id']
+                        )),
+                        'url' => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
+                    ];
+                    if (!in_array($record, $locales)) {
+                        $locales[] = $record;
+                    }
                 }
             }
         }
@@ -186,22 +201,20 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     }
 
     /**
-     * Get URL key for linked CMS page by targeted store view id
+     * Get URL key for CMS page by page id
      *
-     * @param $currentPageId
-     * @param $targetStoreId
+     * @param $pageId
      * @return string
      */
-    public function getLinkedCmsKey($currentPageId, $targetStoreId)
+    public function getCmsPageUrlKey($pageId)
     {
         try {
-            $linkedPageId = $this->getLinkedCmsIdByStoreId($currentPageId, $targetStoreId);
-            $page = $this->pageRepository->getById($linkedPageId);
+            $page = $this->pageRepository->getById($pageId);
             $result = $page->getIdentifier();
         } catch (\Exception $e) {
-            $result = "";
+            $result = '';
         }
-        return $result;
+        return !empty($result) ? $result : '';
     }
 
     /**
@@ -305,13 +318,12 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     }
 
     /**
-     * Get store based cms pages
+     * Get stores by group id
      *
-     * @param $currentPageId
      * @param $storeId
      * @return array|mixed
      */
-    private function getGroupBasedPages($currentPageId, $storeId)
+    private function getStoresByGroupIds($storeId)
     {
         try {
             $storeGroupId = $this->storeManager->getStore($storeId)->getStoreGroupId();
@@ -319,17 +331,12 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             $storesByGroupIds = [];
             foreach ($storeCollections as $store) {
                 if ($store->getGroupId() === $storeGroupId) {
-                    $storesByGroupIds[] = $store->getGroupId();
+                    $storesByGroupIds[] = $store->getStoreId();
                 }
             }
-            $storeIds = [];
-            foreach ($storesByGroupIds as $storesByGroupId) {
-                $storeIds[] = $storesByGroupId;
-            }
-            $getLinkedPages = $this->tieRepository->getPagesByStoreId($currentPageId, $storeIds);
         } catch (\Exception $e) {
-            $getLinkedPages = [];
+            $storesByGroupIds = [];
         }
-        return $getLinkedPages;
+        return $storesByGroupIds;
     }
 }

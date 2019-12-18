@@ -108,12 +108,11 @@ class RewriteUrl
             } while (!isset($currentPageIdentifier));
 
             if (isset($currentPageIdentifier)) {
-                $linkedPageName = $this->tieManagement->getLinkedCmsKey($currentPageIdentifier, $targetStoreId);
                 $linkedPageId = $this->tieManagement->getLinkedCmsIdByStoreId($currentPageIdentifier, $targetStoreId);
-
                 if (isset($linkedPageId) && $linkedPageId != 0) {
                     $this->urlBuilder->setScope($targetStoreId);
-                    $result = $this->urlBuilder->getUrl(null, ['_direct' => $linkedPageName]);
+                    $result = $this->urlBuilder
+                        ->getUrl(null, ['_direct' => $this->tieManagement->getCmsPageUrlKey($linkedPageId)]);
                 }
                 break;
             }
