@@ -132,26 +132,30 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             $linkedPages[] = [
                 'page_id' => $currentPageId,
                 'linked_page_id' => $currentPageId,
-                'store_id' => $currentPageStore
+                'store_id' => $currentPageStore,
             ];
         }
         foreach ($linkedPages as $linkedPage) {
-            $attachedStores = $this->cmsPageModel->lookupStoreIds($linkedPage['linked_page_id']);
-            foreach ($attachedStores as $key => $targetStoreId) {
-                $linkedPageName = $this->getCmsPageUrlKey($linkedPage['linked_page_id']);
-                $this->urlInterface->setScope($targetStoreId);
-                if ($this->urlInterface->getScope()->getWebsiteId() === $currentWebsiteId) {
-                    $record = [
-                        'locale' => str_replace('_', '-', $this->scopeConfig->getValue(
-                            'general/locale/code',
-                            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-                            (int)$linkedPage['store_id']
-                        )),
-                        'url' => $this->urlInterface->getUrl(null, ['_direct' => $linkedPageName])
-                    ];
-                    if (!in_array($record, $locales)) {
-                        $locales[] = $record;
-                    }
+            $targetStoreId = (int)$linkedPage['store_id'];
+            $linkedPageName = $this->getCmsPageUrlKey($linkedPage['linked_page_id']);
+            $this->urlInterface->setScope($targetStoreId);
+            if ($this->urlInterface->getScope()->getWebsiteId() === $currentWebsiteId) {
+                $record = [
+                    'locale' => str_replace('_', '-', $this->scopeConfig->getValue(
+                        'general/locale/code',
+                        \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+                        $targetStoreId
+                    )),
+                    'url' => $this->urlInterface->getUrl(
+                        null,
+                        [
+                            '_direct' => $linkedPageName,
+                            'code' => $this->urlInterface->getScope()->getCode(),
+                        ]
+                    ),
+                ];
+                if (!in_array($record, $locales)) {
+                    $locales[] = $record;
                 }
             }
         }
@@ -170,7 +174,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     {
         $currentPageInfo = [
             'stores' => $this->cmsPageModel->lookupStoreIds($currentPageId),
-            'page_id' => (int) $currentPageId
+            'page_id' => (int) $currentPageId,
         ];
 
         $existingLinks = $this->tieRepository->get($currentPageId);
@@ -198,6 +202,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             $links = $this->tieRepository->add($createdRelations);
             return $links;
         }
+        return false;
     }
 
     /**
