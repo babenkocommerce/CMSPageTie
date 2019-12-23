@@ -99,7 +99,7 @@ class RewriteUrl
             do {
                 preg_match('/(?<=^cms\/page\/view\/page_id\/)\d+(?=$)/', $url, $matches);
                 if ($matches) {
-                    $currentPageIdentifier = (int)$matches[0];
+                    $currentPageIdentifier = (int) $matches[0];
                 } elseif ($urlRewriteDataKeys = array_keys(array_column($urlRewriteData, 'request_path'), $url)) {
                     $url = array_column($urlRewriteData, 'target_path')[$urlRewriteDataKeys[0]];
                 } else {

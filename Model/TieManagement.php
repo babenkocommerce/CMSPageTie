@@ -136,7 +136,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
             ];
         }
         foreach ($linkedPages as $linkedPage) {
-            $targetStoreId = (int)$linkedPage['store_id'];
+            $targetStoreId = (int) $linkedPage['store_id'];
             $linkedPageName = $this->getCmsPageUrlKey($linkedPage['linked_page_id']);
             $this->urlInterface->setScope($targetStoreId);
             if ($this->urlInterface->getScope()->getWebsiteId() === $currentWebsiteId) {
@@ -219,7 +219,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
         } catch (\Exception $e) {
             $result = '';
         }
-        return !empty($result) ? $result : '';
+        return $result ?: '';
     }
 
     /**
@@ -251,7 +251,7 @@ class TieManagement implements \Flexor\CMSPageTie\Api\TieManagementInterface
     public function getLinkedCmsIdByStoreId($currentPageId, $storeId)
     {
         $linkedPageId = $this->tieRepository->getLinkedPageId($currentPageId, $storeId);
-        $result = isset($linkedPageId) ? (int)$linkedPageId['linked_page_id'] : null;
+        $result = isset($linkedPageId) ? (int) $linkedPageId['linked_page_id'] : null;
         return $result;
     }
 

@@ -71,7 +71,7 @@ class Tie extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $select,
             [
                 'page_id' => (int) $pageId,
-                'store_id' => (int) $storeId
+                'store_id' => (int) $storeId,
             ]
         );
     }
