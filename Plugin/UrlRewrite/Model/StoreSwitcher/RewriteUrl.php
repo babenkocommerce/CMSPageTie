@@ -99,7 +99,7 @@ class RewriteUrl
             do {
                 preg_match('/(?<=^cms\/page\/view\/page_id\/)\d+(?=$)/', $url, $matches);
                 if ($matches) {
-                    $currentPageIdentifier = (int)$matches[0];
+                    $currentPageIdentifier = (int) $matches[0];
                 } elseif ($urlRewriteDataKeys = array_keys(array_column($urlRewriteData, 'request_path'), $url)) {
                     $url = array_column($urlRewriteData, 'target_path')[$urlRewriteDataKeys[0]];
                 } else {
@@ -108,12 +108,11 @@ class RewriteUrl
             } while (!isset($currentPageIdentifier));
 
             if (isset($currentPageIdentifier)) {
-                $linkedPageName = $this->tieManagement->getLinkedCmsKey($currentPageIdentifier, $targetStoreId);
                 $linkedPageId = $this->tieManagement->getLinkedCmsIdByStoreId($currentPageIdentifier, $targetStoreId);
-
                 if (isset($linkedPageId) && $linkedPageId != 0) {
                     $this->urlBuilder->setScope($targetStoreId);
-                    $result = $this->urlBuilder->getUrl(null, ['_direct' => $linkedPageName]);
+                    $result = $this->urlBuilder
+                        ->getUrl(null, ['_direct' => $this->tieManagement->getCmsPageUrlKey($linkedPageId)]);
                 }
                 break;
             }
